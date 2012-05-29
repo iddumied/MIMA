@@ -8,12 +8,13 @@ module MIMA
   class Register
 
     ##
-    # initialize this with a given number of pipes
+    # initialize this with a given name and number of pipes
     # it can read or write (default 24).
     # If the buss containes more pipes it onely read an writes 
     # the last significant pipes.
     #
-    def initialize num_pipes = 24
+    def initialize name, num_pipes = 24
+      @name = name
       @bits = Array.new(num_pipes, 0)
       @read = @write = 0
     end
@@ -55,6 +56,26 @@ module MIMA
     def write= w
       @read = (r == 1) ? 1 : 0
     end
+
+    ##
+    # One line description of this
+    #
+    def inspect
+      str = "#<MIMA::Register bits="
+
+      @bits.reverse.each { |b| str += b.to_s }
+      str += " read=#{ @read } write=#{ @write } name=#{ @name }>"
+    end
+
+    ##
+    # Returns a detailed describtion of this
+    #
+    def describe
+      str = "MIMA::Register #{ @name } read(#{ @read }) write(#{ @write })\nBits: "
+      @bits.reverse.each { |b| str += b.inspect }
+      str += "\n"
+    end
+    
 
   end
 

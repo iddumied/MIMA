@@ -44,11 +44,15 @@ module MIMA
       str = "#<MIMA::Bus pipes="
 
       @pipes.reverse.each { |p| str += p.to_s }
-      str += ">" if @components.empty?
+      if @components.empty?
+        str += " components=[]>" 
+      else
+        str += " components=["
+      end
 
       @components.each do |c|
-        unless c == @component.last then str += "#{ c } "
-        else str += "#{ c }>" end
+        unless c == @components.last then str += "#{ c }, "
+        else str += "#{ c.inspect }]>" end
       end
 
       str 
@@ -60,7 +64,7 @@ module MIMA
     def describe
       str = "MIMA::Bus\nPipes: "
       @pipes.reverse.each { |p| str += p.inspect }
-      str += "\n"
+      str += "\nComponents:\n"
       @components.each { |c| str += c.describe }
       str
     end
