@@ -18,6 +18,10 @@ class Bus
   
   ##
   # Validate and Adds a new coponent to this
+  # A component should implement an bus_read method
+  # which returns an array of pipe states (0 or 1)
+  # and an bus_write method with takes an array of 
+  # pipe sates.
   #
   def add component
     if component.methods.include?(:bus_read) and
@@ -61,6 +65,27 @@ class Bus
     str
   end
 
+  ##
+  # Simulates one clock signal.
+  # First this Bus reads from each component
+  # then this Bus writes to each component
+  # so ist on the component site to eccept the read or write
+  #
+  def clk
+    
+    # clear all pipes
+    @pipes.map!{ 0 }
+
+    # read from components
+    @components.each do |c|
+      c.bus_read.each_with_index do |pipe, i|
+        @pipes[i] = 1 if pipe == 1
+      end
+    end
+
+    # write to components
+    @components.each { |c| c.bus_write @pipes }
+  end
 
 
 end
