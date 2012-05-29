@@ -30,11 +30,7 @@ module MIMA
     def initializes address_len = 20, data_len = 24
       @sar = MIMA::Register.new "SAR", address_len
       @sdr = MIMA::Register.new "SDR", data_len
-      @memory = Array.new 2**address_len, 0
-
-      @memory.map!{ Array.new @data_len, 0 }
-
-
+      @memory = { }
     end
 
   end
