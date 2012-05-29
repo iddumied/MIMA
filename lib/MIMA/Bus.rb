@@ -84,7 +84,9 @@ class Bus
     end
 
     # write to components
-    @components.each { |c| c.bus_write @pipes }
+    @components.each { |c| c.bus_write @pipes.clone }
+
+    @pipes.clone
   end
 
 
