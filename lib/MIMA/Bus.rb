@@ -5,7 +5,7 @@
 # status to each component. So its on the components site to 
 # Write or Read from the Bus.
 #
-class Buss
+class Bus
 
   ##
   # initialize this Bus with an empty components set
@@ -27,6 +27,26 @@ class Buss
     else
       raise ArgumentError.new("not a BussComponent")
     end
+  end
+
+  ##
+  # One line description of this
+  #
+  def inspect
+    str = "#<MIMA::Bus "
+    
+    (@pipes.length - 1).downto(0) do |i|
+      if @components.empty? && i == 0 then str += "pipe0=#{ @pipes[i] }>"
+      else str += "pipe#{ i }=#{ @pipes[i] } " end
+    end
+
+    @components.each do |c|
+      unless c == @component.last then str += "#{ c } "
+      else str += "#{ c }>" end
+    end
+
+
+    str 
   end
 
 
