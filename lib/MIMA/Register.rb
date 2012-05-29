@@ -13,8 +13,7 @@ module MIMA
     # If the buss containes more pipes it onely read an writes 
     # the last significant pipes.
     #
-    def initialize name, num_pipes = 24, can_read = true, can_write = true
-      @can_read, @can_write = can_read, can_write
+    def initialize name, num_pipes = 24
       @name = name
       @bits = Array.new(num_pipes, 0)
       @read = @write = 0
@@ -25,7 +24,6 @@ module MIMA
     # if this should read
     #
     def bus_read pipes
-      raise RuntimeError.new("#{ @name } can not read from Bus") unless @can_read
       raise RuntimeError.new("Bus Components can not read and write at the same time") if @write == 1 and @read == 1
 
       if @read == 1
@@ -40,7 +38,6 @@ module MIMA
     # if this should write
     #
     def bus_write
-      raise RuntimeError.new("#{ @name } can not write to Bus") unless @can_write
       raise RuntimeError.new("Bus Components can not read and write at the same time") if @write == 1 and @read == 1
 
       if @write == 1
