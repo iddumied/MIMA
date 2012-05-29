@@ -21,7 +21,9 @@ class Bus
   #
   def add component
     if component.methods.include?(:bus_read) and
-        component.methods.include?(:bus_write)
+        component.methods.include?(:bus_write) and
+          component.methods.include?(:describe) and
+            component.methods.include?(:inspect)
       
       @components << component
     else
@@ -45,8 +47,18 @@ class Bus
       else str += "#{ c }>" end
     end
 
-
     str 
+  end
+
+  ##
+  # Returns a detailed describtion of this
+  #
+  def describe
+    str = "MIMA::Bus\nPipes: "
+    @pipes.reverse.each { |p| str += p.inspect }
+    str += "\n"
+    @components.each { |c| str += c.describe }
+    str
   end
 
 
