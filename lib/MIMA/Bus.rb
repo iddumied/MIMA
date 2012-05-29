@@ -20,9 +20,9 @@ module MIMA
     
     ##
     # Validate and Adds a new coponent to this
-    # A component should implement an bus_read method
+    # A component should implement an bus_write method
     # which returns an array of pipe states (0 or 1)
-    # and an bus_write method with takes an array of 
+    # and an bus_read method with takes an array of 
     # pipe sates.
     #
     def add component
@@ -69,8 +69,8 @@ module MIMA
 
     ##
     # Simulates one clock signal.
-    # First this Bus reads from each component
-    # then this Bus writes to each component
+    # First this Bus reads from each component (the component writes to the bus)
+    # then this Bus writes to each component (the component reads from the bus)
     # so ist on the component site to eccept the read or write
     #
     def clk
@@ -80,13 +80,13 @@ module MIMA
 
       # read from components
       @components.each do |c|
-        c.bus_read.each_with_index do |pipe, i|
+        c.bus_write.each_with_index do |pipe, i|
           @pipes[i] = 1 if pipe == 1
         end
       end
 
       # write to components
-      @components.each { |c| c.bus_write @pipes.clone }
+      @components.each { |c| c.bus_read @pipes.clone }
 
       @pipes.clone
     end
