@@ -24,6 +24,8 @@ module MIMA
     # if this should read
     #
     def bus_read pipes
+      raise RuntimeError.new("Bus Components can not read and write at the same time") if @write == 1 and @read == 1
+
       if @read == 1
         for i in (0...@bits.length) do
           @bits[i] = pipes[i]
@@ -36,6 +38,8 @@ module MIMA
     # if this should write
     #
     def bus_write
+      raise RuntimeError.new("Bus Components can not read and write at the same time") if @write == 1 and @read == 1
+
       if @write == 1
         @bits.clone
       else
@@ -56,6 +60,11 @@ module MIMA
     def write= w
       @read = (r == 1) ? 1 : 0
     end
+
+    ##
+    # Returns the number of Bits this could store
+    #
+    def length; @bits.length; end
 
     ##
     # One line description of this
