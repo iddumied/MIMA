@@ -27,7 +27,7 @@ module MIMA
       raise RuntimeError.new("Bus Components can not read and write at the same time") if @write == 1 and @read == 1
 
       if @read == 1
-        for i in (0...@bits.length) do
+        for i in (0...pipes.length) do
           @bits[i] = pipes[i]
         end
       end
