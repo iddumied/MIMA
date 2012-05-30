@@ -2,6 +2,7 @@ Architecture of the MIMA
 ===
 ---
 
+<pre>
 
 
                          /\
@@ -67,3 +68,5 @@ Architecture of the MIMA
  |                 Memory                                                   |
  |                                                                          |
  +--------------------------------------------------------------------------+
+
+ </pre>
