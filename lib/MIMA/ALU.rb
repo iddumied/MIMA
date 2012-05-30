@@ -56,7 +56,7 @@ module MIMA
     #  0  1  1 | X AND Y -> Z
     #  1  0  0 | X OR Y -> Z
     #  1  0  1 | X XOR Y -> Z
-    #  1  1  0 | one complement of X -> Z
+    #  1  1  0 | one complement (NOT) of X -> Z
     #  1  1  1 | if X == Y, -1 -> Z else 0 -> Z
     #
     def clk
@@ -64,11 +64,11 @@ module MIMA
         when [0,0,0] then do_nothing; true
         when [0,0,1] then x_add_y;    true
         when [0,1,0] then rotate_x;   true
-        when [0,1,1] then
-        when [1,0,0] then
-        when [1,0,1] then
-        when [1,1,0] then
-        when [1,1,1] then
+        when [0,1,1] then x_and_y;    true
+        when [1,0,0] then x_or_y;     true
+        when [1,0,1] then x_xor_y;    true
+        when [2,1,0] then not_x;      true
+        when [1,1,1] then x_equal_y;  true
         else false
       end
     end
@@ -215,6 +215,57 @@ module MIMA
 
       for i in (0...@z.length) do
         z[i] = x[i] ^ y[i]
+      end
+
+      @z.bus_read z
+      @z.read = 0
+    end
+
+    ##
+    # lets the ALU calulate:
+    #
+    # one complement of X -> Z
+    # ( NOT X -> Z )
+    #
+    def not_x
+      @x.read  = 0
+      @x.write = 1
+      @z.read  = 1
+      @z.write = 0
+
+      x = @x.bus_write
+      z = Array.new @z.length, 0
+
+      for i in (0...@z.length) do
+        z[i] = (x[i] == 1) ? 0 : 1
+      end
+
+      @z.bus_read z
+      @z.read = 0
+    end
+
+    ##
+    # lets the ALU calulate:
+    #
+    # if X == Y, -1 -> Z else 0 -> Z
+    #
+    def x_equal_y
+      @x.read  = 0
+      @x.write = 1
+      @y.read  = 0
+      @y.write = 1
+      @z.read  = 1
+      @z.write = 0
+
+      x = @x.bus_write
+      y = @y.bus_write
+      z = Array.new @z.length, 1
+
+      for i in (0...@z.length) do
+        unless x[i] == y[i]
+          z = Array.new @z.length, 0
+          break
+        end
       end
 
       @z.bus_read z
