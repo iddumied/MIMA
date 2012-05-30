@@ -59,7 +59,7 @@ module MIMA
     # Control pipe to set the write status of this
     #
     def write= w
-      @read = (w == 1) ? 1 : 0
+      @write = (w == 1) ? 1 : 0
     end
 
     ##
