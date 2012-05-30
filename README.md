@@ -2,7 +2,7 @@ Architecture of the MIMA
 ===
 ---
 
-<pre>
+<pre style="line-height: 1;">
 
 
                          /\
