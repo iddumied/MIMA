@@ -27,7 +27,7 @@ module MIMA
     # initializes this with a given address length
     # and data length
     #
-    def initializes address_len = 20, data_len = 24
+    def initialize address_len = 20, data_len = 24
       @sar = MIMA::Register.new "SAR", address_len
       @sdr = MIMA::Register.new "SDR", data_len
       @memory = { }
