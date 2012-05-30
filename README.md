@@ -1,6 +1,9 @@
-<h1>Architecture of the MIMA</h1>
-<hr />
+Architecture of the MIMA
+===
+---
+
 <pre style="line-height: 110%;">
+
 
                          /\
     Ar    Aw             ||              Pr    Pw  
