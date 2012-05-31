@@ -3,6 +3,7 @@ load './lib/MIMA/Register.rb'
 load './lib/MIMA/Constant.rb'
 load './lib/MIMA/Memory.rb'
 load './lib/MIMA/ALU.rb'
+load './lib/MIMA/MicroProgrammParser.rb'
 
 module MIMA
   VERSION = '0.0.1'
