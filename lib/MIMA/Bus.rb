@@ -93,7 +93,6 @@ module MIMA
       @pipes.clone
     end
 
-
   end
 
 end

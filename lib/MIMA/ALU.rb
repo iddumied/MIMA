@@ -36,9 +36,9 @@ module MIMA
     def c0= c; @c0 = (c == 1) ? 1 : 0; end
 
     ##
-    # Set control pipe C2
+    # Set control pipe C1
     #
-    def c2= c; @c2 = (c == 1) ? 1 : 0; end
+    def c1= c; @c1 = (c == 1) ? 1 : 0; end
 
     ##
     # Set control pipe C2
@@ -61,16 +61,17 @@ module MIMA
     #
     def clk
       case [@c2, @c1, @c0]
-        when [0,0,0] then do_nothing; true
-        when [0,0,1] then x_add_y;    true
-        when [0,1,0] then rotate_x;   true
-        when [0,1,1] then x_and_y;    true
-        when [1,0,0] then x_or_y;     true
-        when [1,0,1] then x_xor_y;    true
-        when [2,1,0] then not_x;      true
-        when [1,1,1] then x_equal_y;  true
-        else false
+        when [0,0,0] then do_nothing
+        when [0,0,1] then x_add_y
+        when [0,1,0] then rotate_x;   puts "[DEBUG] ALU rotate x"
+        when [0,1,1] then x_and_y;    puts "[DEBUG] ALU x & y"
+        when [1,0,0] then x_or_y;     puts "[DEBUG] ALU x | y"
+        when [1,0,1] then x_xor_y;    puts "[DEBUG] ALU x ^ y"
+        when [2,1,0] then not_x;      puts "[DEBUG] ALU ~ x"
+        when [1,1,1] then x_equal_y;  puts "[DEBUG] ALU x == y"
+        else return false
       end
+      @z
     end
 
     ##
@@ -81,7 +82,7 @@ module MIMA
     def do_nothing
       @z.write = 1
       @z.read  = 0
-      z = z.bus_write
+      z = @z.bus_write
 
       @z.write = 0
       @z.read  = 1
@@ -138,10 +139,10 @@ module MIMA
       z = Array.new @z.length, 0
       @x.write = 0
 
-      for i in (0..@z.length) do
+      for i in (0...@z.length) do
         z[i] = x[(i - 1) % @z.length]
       end
-      
+
       @z.bus_read z
       @z.read = 0
     end

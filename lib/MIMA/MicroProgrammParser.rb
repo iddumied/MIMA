@@ -11,7 +11,7 @@ module MIMA
     #
     # <R1> -> <R2>;     # R1 writes, R2 reads (R1 can be Z, O, Akku, IRA, IR, MDR; 
     #                   #   R2 can be X, Y, Akku, IRA, IR,  MAR, MDR)
-    # <CP> = 1;     # Sets the Control Pipe CP to 1 / 0 (CP can be R, W, D)
+    # <CP> = 1;         # Sets the Control Pipe CP to 1 / 0 (CP can be R, W, D)
     # ALU ADD;          # lets the ALU calculate X + Y -> Z
     # ALU rotate;       # lets the ALU calculate rotate x right -> Z
     # ALU AND;          # lets the ALU calculate X AND Y -> Z
@@ -83,6 +83,8 @@ module MIMA
             else            set_register_op(bits, args)
           end
         end
+
+        bits
       end
 
       ##
@@ -148,7 +150,7 @@ module MIMA
       ##
       # sets the Flags in a given bit array depending on the given operation
       #
-      def set_register_op bits, op
+      def self.set_register_op bits, op
         unless op.length == 3
           raise MicroCodeParseError.new("not an Micro Code Operation")
         end
@@ -167,7 +169,7 @@ module MIMA
       # where R1, can be: Akku, Z, O, IAR, IR, MDR
       # and R2 can be: Akku, IAR, IR, X, Y, MAR, MDR
       #
-      def write_read bits, op
+      def self.write_read bits, op
 
         # Register writes
         case op.first
@@ -200,7 +202,7 @@ module MIMA
       #
       # where CP can be: R, W, D
       #
-      def zuweisung bits, op #TODO zuweisung -> englisch
+      def self.zuweisung bits, op #TODO zuweisung -> englisch
         unless op.last == "1"
           raise MicroCodeParseError.new("invalid operand #{ op.last }")
         end
