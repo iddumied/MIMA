@@ -9,8 +9,9 @@ module MIMA
     # 
     # The Micro-Programm-Code knows the folowing comands:
     #
-    # <R1> -> <R2>;     # R1 writes, R2 reads
-    # <CP> = <1/0>;     # Sets the Control Pipe CP to 1 / 0
+    # <R1> -> <R2>;     # R1 writes, R2 reads (R1 can be Z, O, Akku, IRA, IR, MDR; 
+    #                   #   R2 can be X, Y, Akku, IRA, IR,  MAR, MDR)
+    # <CP> = <1/0>;     # Sets the Control Pipe CP to 1 / 0 (CP can be R, W, D)
     # ALU ADD;          # lets the ALU calculate X + Y -> Z
     # ALU rotate;       # lets the ALU calculate rotate x right -> Z
     # ALU AND;          # lets the ALU calculate X AND Y -> Z
@@ -29,7 +30,7 @@ module MIMA
     #  25 | X read
     #  24 | Y read
     #  23 | Z write
-    #  22 | One write
+    #  22 | O (One) write
     #  21 | IAR read
     #  20 | IAR write
     #  19 | IR read
@@ -40,10 +41,10 @@ module MIMA
     #  14 | ALU C2
     #  13 | ALU C1
     #  12 | ALU C0
-    #  11 | Memory read
-    #  10 | Memory write
-    #   9 | reserved
-    #   8 | reserved
+    #  11 | R (Memory read)
+    #  10 | W (Memory write)
+    #   9 | D (Decode OpCode)
+    #   8 | D (Decode OpCode)
     #   7 | next Address
     #   6 | next Address
     #   5 | next Address
@@ -116,7 +117,7 @@ module MIMA
       #
       def self.set_addr bits, addr
         addr = addr.split("x").last
-        if addr.length != 2
+        unless addr.length == 2
           raise MicroCodeParseError.new("wrong address length")
         end
 
@@ -141,6 +142,79 @@ module MIMA
             else raise MicroCodeParseError.new("Not a hex number: #{ addr[i] }")
           end
         end
+
+      end
+
+      ##
+      # sets the Flags in a given bit array depending on the given operation
+      #
+      def set_register_op bits, op
+        unless op.length == 3
+          raise MicroCodeParseError.new("not an Micro Code Operation")
+        end
+
+        case op[1]
+          when "->"
+          when "=" then zuweisung(bits, op)
+          else raise MicroCodeParseError.new("Unknowen Register operation: #{ op[1] }")
+        end
+      end
+
+      def write_read bits, op
+
+        # Register writes
+        case op.first
+          when "Akku" then bits[26] = 1
+          when "Z"    then bits[23] = 1
+          when "O"    then bits[22] = 1
+          when "IAR"  then bits[20] = 1
+          when "IR"   then bits[18] = 1
+          when "MDR"  then bits[16] = 1
+          else
+        end
+
+        # Register reads
+        case op.last
+          when "Akku" then bits[] = 1
+          when "IAR"  then bits[] = 1
+          when "IR"   then bits[] = 1
+          when "X"    then bits[] = 1
+          when "Y"    then bits[] = 1
+          when "MAR"  then bits[] = 1
+          when "MDR"  then bits[] = 1
+          else
+        end
+
+      end
+
+      def zuweisung bits, op #TODO zuweisung -> englisch
+        unless op.last == "1"
+          raise MicroCodeParseError.new("invalid operand #{ op.last }")
+        end
+
+        case op.first
+          when "R" then bits[11] = 1
+          when "W" then bits[10] = 1
+          when "D" then bits[8,2] = [1, 1] 
+          else raise MicroCodeParseError.new("Unknowen Register: #{ op.first }")
+        end
+
+      end
+
+      def set_register bits, register, wert
+        case register
+          when "Akku"
+          when "X"
+          when "Y"
+          when "Z"
+          when "One"
+          when "IRA"
+          when "IA"
+          when "MDR"
+          when "MAR"
+
+        end
+        
 
       end
 
