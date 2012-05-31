@@ -11,7 +11,7 @@ module MIMA
     #
     # <R1> -> <R2>;     # R1 writes, R2 reads (R1 can be Z, O, Akku, IRA, IR, MDR; 
     #                   #   R2 can be X, Y, Akku, IRA, IR,  MAR, MDR)
-    # <CP> = <1/0>;     # Sets the Control Pipe CP to 1 / 0 (CP can be R, W, D)
+    # <CP> = 1;     # Sets the Control Pipe CP to 1 / 0 (CP can be R, W, D)
     # ALU ADD;          # lets the ALU calculate X + Y -> Z
     # ALU rotate;       # lets the ALU calculate rotate x right -> Z
     # ALU AND;          # lets the ALU calculate X AND Y -> Z
@@ -80,7 +80,7 @@ module MIMA
           case args.first
             when "ALU" then set_alu(bits, args[1])
             when "ADR" then set_addr(bits, args[1])
-            else
+            else            set_register_op(bits, args)
           end
         end
       end
@@ -154,12 +154,19 @@ module MIMA
         end
 
         case op[1]
-          when "->"
-          when "=" then zuweisung(bits, op)
+          when "->" then write_read(bits, op) 
+          when "="  then zuweisung(bits, op)
           else raise MicroCodeParseError.new("Unknowen Register operation: #{ op[1] }")
         end
       end
 
+      ##
+      # sets the bits of an 
+      # <R1> -> <R2> operation
+      #
+      # where R1, can be: Akku, Z, O, IAR, IR, MDR
+      # and R2 can be: Akku, IAR, IR, X, Y, MAR, MDR
+      #
       def write_read bits, op
 
         # Register writes
@@ -175,18 +182,24 @@ module MIMA
 
         # Register reads
         case op.last
-          when "Akku" then bits[] = 1
-          when "IAR"  then bits[] = 1
-          when "IR"   then bits[] = 1
-          when "X"    then bits[] = 1
-          when "Y"    then bits[] = 1
-          when "MAR"  then bits[] = 1
-          when "MDR"  then bits[] = 1
+          when "Akku" then bits[27] = 1
+          when "IAR"  then bits[21] = 1
+          when "IR"   then bits[19] = 1
+          when "X"    then bits[25] = 1
+          when "Y"    then bits[24] = 1
+          when "MAR"  then bits[15] = 1
+          when "MDR"  then bits[17] = 1
           else
         end
 
       end
 
+      ##
+      # Sets the Bits of an 
+      # <CP> = 1 operation
+      #
+      # where CP can be: R, W, D
+      #
       def zuweisung bits, op #TODO zuweisung -> englisch
         unless op.last == "1"
           raise MicroCodeParseError.new("invalid operand #{ op.last }")
@@ -198,23 +211,6 @@ module MIMA
           when "D" then bits[8,2] = [1, 1] 
           else raise MicroCodeParseError.new("Unknowen Register: #{ op.first }")
         end
-
-      end
-
-      def set_register bits, register, wert
-        case register
-          when "Akku"
-          when "X"
-          when "Y"
-          when "Z"
-          when "One"
-          when "IRA"
-          when "IA"
-          when "MDR"
-          when "MAR"
-
-        end
-        
 
       end
 
