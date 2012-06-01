@@ -240,7 +240,7 @@ module MIMA
       # where CP can be: R, W, D
       #
       def allocation op #TODO zuweisung -> englisch
-        if @flags[op.first].nil?
+        if FLAGS[op.first].nil?
           raise MicroCodeParseError.new("Unknowen Register: #{ op.first }")
         elsif op.last != "1"
           raise MicroCodeParseError.new("invalid operand #{ op.last }")
@@ -281,7 +281,7 @@ module MIMA
               raise MicroCodeParseError.new "onely one of R, W, D can be setted"
             end
 
-            falgs = reg 
+            flags = reg 
           end
         end
 
