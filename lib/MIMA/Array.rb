@@ -39,6 +39,7 @@ class Array
         end
       end
 
+      hex += "x0"
       hex.reverse
     end
 
