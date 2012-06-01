@@ -75,12 +75,12 @@ module MIMA
       # which could read from the bus
       #
       @@read = {
-        "Akku" => 27
-        "X"    => 25
-        "Y"    => 24
-        "IRA"  => 21
-        "IR"   => 19
-        "MDR"  => 17
+        "Akku" => 27,
+        "X"    => 25,
+        "Y"    => 24,
+        "IRA"  => 21,
+        "IR"   => 19,
+        "MDR"  => 17,
         "MAR"  => 15
       }
 
@@ -88,7 +88,7 @@ module MIMA
       # The position of the write Flags of the Register 
       # which could write to the bus
       #
-      @@wite = {
+      @@write = {
         "Akku" => 26,
         "Z"    => 23,
         "O"    => 22,
@@ -110,6 +110,8 @@ module MIMA
         "XOR"    => [1,0,1],
         "NOT"    => [0,1,1],
         "EQL"    => [1,1,1] 
+      }
+
       ##
       # Flags:
       #
@@ -237,15 +239,17 @@ module MIMA
         @bits[@@flags[op.first]] = 1
       end
 
-    ##
-    # decode an validates the bits array of this
-    # validates means that it detects collisons 
-    # if two register write.
-    #
-    def decode
-
-      nil
-      
+      ##
+      # decode an validates the bits array of this
+      # validates means that it detects collisons 
+      # if two register write.
+      #
+      def decode
+ 
+        nil
+        
+ 
+      end
 
     end
     
