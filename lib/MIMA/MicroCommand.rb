@@ -72,17 +72,16 @@ module MIMA
       # initialize this with a given String or MicroProgramm Array
       #
       def initialize arg
-        case arg.class
-          when String
-            @bits = Array.new 28, 0
-            @description
-            parse 
-          when Array
-            @bits = arg
-            @description = ""
-            decode
-          else
-            raise ArgumentError.new "expected String or Array, but got #{ arg.class }"
+        if arg.is_a? String
+          @bits = Array.new 28, 0
+          @description = arg
+          parse 
+        elsif a.is_a? Array
+          @bits = arg
+          @description = ""
+          decode
+        else
+          raise ArgumentError.new "expected String or Array, but got #{ arg.class }"
         end
       end
 
