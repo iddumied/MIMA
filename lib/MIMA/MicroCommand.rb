@@ -141,6 +141,8 @@ module MIMA
         end
       end
 
+      private
+
       ##
       # parses a Micro-Programm-Code description and sets the falgs in the bits Array
       #
@@ -245,10 +247,52 @@ module MIMA
       # if two register write.
       #
       def decode
- 
-        nil
-        
- 
+        write = nil
+        read  = []
+        flags = nil
+
+        # collecting informations
+
+        @@write.each do |reg, pos| 
+          if @bits[pos] == 1
+            unless write.nil?
+              raise MicroCodeParseError.new "Collision #{ reg } and #{ write } writing"
+            end
+
+            write = reg
+          end
+        end
+
+        @@read.each do |reg, pos|
+          read << reg if @bits[pos] == 1
+        end
+
+        @@flags.each do |reg, pos|
+          if @bits[pos] == 1
+            unless flags.nil?
+              raise MicroCodeParseError.new "onely one of R, W, D can be setted"
+            end
+
+            falgs = reg 
+          end
+        end
+
+        if read.empty? and write
+          raise MicroCodeParseError.new "#{ write } writes to nothing"
+        end
+
+        # genarting Human readable Code
+
+        read.each do |r|
+          @description += "#{ write } -> #{ r }; "
+        end
+
+        unless @@alu_falgs[@bits[12,3]].nil?
+          @description += "ALU #{ @@alu_falgs[@bits[12,3]] }; "
+        end
+
+        @description += "#{ flags } = 1; " unless flags.nil?
+        @description.chop!
       end
 
     end
