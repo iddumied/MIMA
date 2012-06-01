@@ -1,3 +1,5 @@
+require './lib/MIMA/String.rb'
+
 module MIMA
   
   class ControlUnit
@@ -69,6 +71,58 @@ module MIMA
       end
       
       ##
+      # The position of the read Flags of the Register 
+      # which could read from the bus
+      #
+      @@read = {
+        "Akku" => 27
+        "X"    => 25
+        "Y"    => 24
+        "IRA"  => 21
+        "IR"   => 19
+        "MDR"  => 17
+        "MAR"  => 15
+      }
+
+      ##
+      # The position of the write Flags of the Register 
+      # which could write to the bus
+      #
+      @@wite = {
+        "Akku" => 26,
+        "Z"    => 23,
+        "O"    => 22,
+        "IRA"  => 20,
+        "IR"   => 18,
+        "MDR"  => 16
+      }
+
+      ##
+      # The C0, C1, C2
+      # Flag for the specifig ALU operation
+      # the Flags are at the position C0(12), C1(13), C2(14)
+      #
+      @@alu_falgs = {
+        "ADD"    => [1,0,0],
+        "rotate" => [0,1,0], 
+        "AND"    => [1,1,0],
+        "OR"     => [0,0,1],
+        "XOR"    => [1,0,1],
+        "NOT"    => [0,1,1],
+        "EQL"    => [1,1,1] 
+      ##
+      # Flags:
+      #
+      # R, W for the Memory
+      # D (Decode) for the ControlUnit
+      #
+      @@flags = {
+        "R" => 11,
+        "W" => 10,
+        "D" => 9
+      }
+
+      ##
       # initialize this with a given String or MicroProgramm Array
       #
       def initialize arg
@@ -115,49 +169,23 @@ module MIMA
       # ALU EQL;     |  1  1  1
       #
       def set_alu op
-        case op
-          when "ADD"    then @bits[12,3] = [1,0,0]
-          when "rotate" then @bits[12,3] = [0,1,0] 
-          when "AND"    then @bits[12,3] = [1,1,0]
-          when "OR"     then @bits[12,3] = [0,0,1]
-          when "XOR"    then @bits[12,3] = [1,0,1] 
-          when "NOT"    then @bits[12,3] = [0,1,1] 
-          when "EQL"    then @bits[12,3] = [1,1,1] 
-          else raise MicroCodeParseError.new("ALU unknowen operation: #{ op }")
+        if @@alu_falgs[op].nil?
+          raise MicroCodeParseError.new("ALU unknowen operation: #{ op }")
         end
+
+        @bits[12,3] = @@alu_falgs[op]
       end
 
       ##
       # Sets the given addr in the given bits Array
+      # addr should be something like 0x??
       #
       def set_addr addr
-        addr = addr.split("x").last
-        unless addr.length == 2
+        unless addr.length == 4
           raise MicroCodeParseError.new("wrong address length")
         end
 
-        for i in (0..1) do
-          case addr[i].upcase
-            when "0" then @bits[(i-1).abs * 4, 4] = [0,0,0,0]
-            when "1" then @bits[(i-1).abs * 4, 4] = [1,0,0,0]
-            when "2" then @bits[(i-1).abs * 4, 4] = [0,1,0,0]
-            when "3" then @bits[(i-1).abs * 4, 4] = [1,1,0,0]
-            when "4" then @bits[(i-1).abs * 4, 4] = [0,0,1,0]
-            when "5" then @bits[(i-1).abs * 4, 4] = [1,0,1,0]
-            when "6" then @bits[(i-1).abs * 4, 4] = [0,1,1,0]
-            when "7" then @bits[(i-1).abs * 4, 4] = [1,1,1,0]
-            when "8" then @bits[(i-1).abs * 4, 4] = [0,0,0,1]
-            when "9" then @bits[(i-1).abs * 4, 4] = [1,0,0,1]
-            when "A" then @bits[(i-1).abs * 4, 4] = [0,1,0,1]
-            when "B" then @bits[(i-1).abs * 4, 4] = [1,1,0,1]
-            when "C" then @bits[(i-1).abs * 4, 4] = [0,0,1,1]
-            when "D" then @bits[(i-1).abs * 4, 4] = [1,0,1,1]
-            when "E" then @bits[(i-1).abs * 4, 4] = [0,1,1,1]
-            when "F" then @bits[(i-1).abs * 4, 4] = [1,1,1,1]
-            else raise MicroCodeParseError.new("Not a hex number: #{ addr[i] }")
-          end
-        end
-
+        @bits[0, 8] = addr.hex_to_bin
       end
 
       ##
@@ -169,44 +197,28 @@ module MIMA
         end
 
         case op[1]
-          when "->" then write_read(op) 
-          when "="  then zuweisung(op)
+          when "->" then reg_copy(op) 
+          when "="  then allocation(op)
           else raise MicroCodeParseError.new("Unknowen Register operation: #{ op[1] }")
         end
       end
 
       ##
       # sets the bits of an 
-      # <R1> -> <R2> operation
+      # <R1> -> <R2> operation (R1 copy into R2)
       #
       # where R1, can be: Akku, Z, O, IAR, IR, MDR
       # and R2 can be: Akku, IAR, IR, X, Y, MAR, MDR
       #
-      def write_read op
-
-        # Register writes
-        case op.first
-          when "Akku" then @bits[26] = 1
-          when "Z"    then @bits[23] = 1
-          when "O"    then @bits[22] = 1
-          when "IAR"  then @bits[20] = 1
-          when "IR"   then @bits[18] = 1
-          when "MDR"  then @bits[16] = 1
-          else
+      def reg_copy op
+        if @@write[op.first].nil?
+          raise MicroCodeParseError.new("Register #{ op } unknowen / can not read")
+        elsif @@read[op.last].nil?
+          raise MicroCodeParseError.new("Register #{ op } unknowen / can not read")
         end
 
-        # Register reads
-        case op.last
-          when "Akku" then @bits[27] = 1
-          when "IAR"  then @bits[21] = 1
-          when "IR"   then @bits[19] = 1
-          when "X"    then @bits[25] = 1
-          when "Y"    then @bits[24] = 1
-          when "MAR"  then @bits[15] = 1
-          when "MDR"  then @bits[17] = 1
-          else
-        end
-
+        @bits[@@write[op.first]] = 1
+        @bits[@@read[op.last]] = 1
       end
 
       ##
@@ -215,22 +227,28 @@ module MIMA
       #
       # where CP can be: R, W, D
       #
-      def zuweisung op #TODO zuweisung -> englisch
-        unless op.last == "1"
+      def allocation op #TODO zuweisung -> englisch
+        if @flags[op.first].nil?
+          raise MicroCodeParseError.new("Unknowen Register: #{ op.first }")
+        elsif op.last != "1"
           raise MicroCodeParseError.new("invalid operand #{ op.last }")
         end
 
-        case op.first
-          when "R" then @bits[11] = 1
-          when "W" then @bits[10] = 1
-          when "D" then @bits[8,2] = [1, 1] 
-          else raise MicroCodeParseError.new("Unknowen Register: #{ op.first }")
-        end
-
+        @bits[@@flags[op.first]] = 1
       end
 
-    end
+    ##
+    # decode an validates the bits array of this
+    # validates means that it detects collisons 
+    # if two register write.
+    #
+    def decode
 
+      nil
+      
+
+    end
+    
   end
 
 end
