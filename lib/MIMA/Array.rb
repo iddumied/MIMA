@@ -18,7 +18,7 @@ class Array
     def bin_to_hex
       hex = ""
 
-      for i in (0...(self.length/4) do
+      for i in (0...(self.length/4)) do
         case self[i * 4, 4]
           when [0,0,0,0] then hex += "0"
           when [1,0,0,0] then hex += "1"
