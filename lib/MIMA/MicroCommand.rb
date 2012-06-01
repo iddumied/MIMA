@@ -132,7 +132,7 @@ module MIMA
           @bits = Array.new 28, 0
           @description = arg
           parse 
-        elsif a.is_a? Array
+        elsif arg.is_a? Array
           @bits = arg
           @description = ""
           decode
@@ -140,6 +140,16 @@ module MIMA
           raise ArgumentError.new "expected String or Array, but got #{ arg.class }"
         end
       end
+
+      ##
+      # returns the microprogramm of this (the bits)
+      #
+      def bits; @bits.clone; end
+
+      ##
+      # returns the description of this
+      #
+      def description; @description.clone; end
 
       private
 
@@ -292,7 +302,7 @@ module MIMA
         end
 
         @description += "#{ flags } = 1; " unless flags.nil?
-        @description.chop!
+        @description += "ADR #{ @bits[0,8].bin_to_hex };"
       end
 
     end
