@@ -1,5 +1,3 @@
-require './lib/MIMA/String.rb'
-
 module MIMA
   
   class ControlUnit
@@ -74,7 +72,7 @@ module MIMA
       # The position of the read Flags of the Register 
       # which could read from the bus
       #
-      @@read = {
+      READ = {
         "Akku" => 27,
         "X"    => 25,
         "Y"    => 24,
@@ -88,7 +86,7 @@ module MIMA
       # The position of the write Flags of the Register 
       # which could write to the bus
       #
-      @@write = {
+      WRITE = {
         "Akku" => 26,
         "Z"    => 23,
         "O"    => 22,
@@ -102,7 +100,7 @@ module MIMA
       # Flag for the specifig ALU operation
       # the Flags are at the position C0(12), C1(13), C2(14)
       #
-      @@alu_falgs = {
+      ALU_FLAGS = {
         "ADD"    => [1,0,0],
         "rotate" => [0,1,0], 
         "AND"    => [1,1,0],
@@ -118,7 +116,7 @@ module MIMA
       # R, W for the Memory
       # D (Decode) for the ControlUnit
       #
-      @@flags = {
+      FLAGS = {
         "R" => 11,
         "W" => 10,
         "D" => 9
@@ -183,11 +181,11 @@ module MIMA
       # ALU EQL;     |  1  1  1
       #
       def set_alu op
-        if @@alu_falgs[op].nil?
+        if ALU_FLAGS[op].nil?
           raise MicroCodeParseError.new("ALU unknowen operation: #{ op }")
         end
 
-        @bits[12,3] = @@alu_falgs[op]
+        @bits[12,3] = ALU_FLAGS[op]
       end
 
       ##
@@ -225,14 +223,14 @@ module MIMA
       # and R2 can be: Akku, IAR, IR, X, Y, MAR, MDR
       #
       def reg_copy op
-        if @@write[op.first].nil?
+        if WRITE[op.first].nil?
           raise MicroCodeParseError.new("Register #{ op } unknowen / can not read")
-        elsif @@read[op.last].nil?
+        elsif READ[op.last].nil?
           raise MicroCodeParseError.new("Register #{ op } unknowen / can not read")
         end
 
-        @bits[@@write[op.first]] = 1
-        @bits[@@read[op.last]] = 1
+        @bits[WRITE[op.first]] = 1
+        @bits[READ[op.last]] = 1
       end
 
       ##
@@ -248,7 +246,7 @@ module MIMA
           raise MicroCodeParseError.new("invalid operand #{ op.last }")
         end
 
-        @bits[@@flags[op.first]] = 1
+        @bits[FLAGS[op.first]] = 1
       end
 
       ##
@@ -263,7 +261,7 @@ module MIMA
 
         # collecting informations
 
-        @@write.each do |reg, pos| 
+        WRITE.each do |reg, pos| 
           if @bits[pos] == 1
             unless write.nil?
               raise MicroCodeParseError.new "Collision #{ reg } and #{ write } writing"
@@ -273,11 +271,11 @@ module MIMA
           end
         end
 
-        @@read.each do |reg, pos|
+        READ.each do |reg, pos|
           read << reg if @bits[pos] == 1
         end
 
-        @@flags.each do |reg, pos|
+        FLAGS.each do |reg, pos|
           if @bits[pos] == 1
             unless flags.nil?
               raise MicroCodeParseError.new "onely one of R, W, D can be setted"
@@ -297,8 +295,8 @@ module MIMA
           @description += "#{ write } -> #{ r }; "
         end
 
-        unless @@alu_falgs[@bits[12,3]].nil?
-          @description += "ALU #{ @@alu_falgs[@bits[12,3]] }; "
+        ALU_FLAGS.each do |op, opcode|
+          @description += "ALU #{ op }; " if opcode == @bits[12,3]
         end
 
         @description += "#{ flags } = 1; " unless flags.nil?
