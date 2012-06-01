@@ -68,12 +68,12 @@ module MIMA
     # implements the MIMA Comands
     #
     MICROCOMMANDS = [
-      micro("IAR -> MAR; IAR -> X; R = 1; ADR 0x01;"),
-      micro("O -> Y; R = 1; ADR 0x02;"),
-      micro("ALU ADD; R = 1; ADR 0x03;"),
-      micro("Z -> IAR; ADR 0x04;"),
-      micro("MDR -> IR; ARD 0x05;"),
-      micro("D = 1;"),
+      micro("IAR -> MAR; IAR -> X; R = 1; ADR 0x01;"),  ##
+      micro("O -> Y; R = 1; ADR 0x02;"),                # Fetch Phase:
+      micro("ALU ADD; R = 1; ADR 0x03;"),               # load instrcution add Adress of IRA
+      micro("Z -> IAR; ADR 0x04;"),                     # and increase IRA
+      micro("MDR -> IR; ARD 0x05;"),                    # then Decode loaded instruction
+      micro("D = 1;"),                                  ##
     ]
 
   end
