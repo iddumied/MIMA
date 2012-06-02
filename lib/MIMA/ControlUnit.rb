@@ -59,7 +59,7 @@ module MIMA
     # Returns a MicroCommand for the given String
     #
     def self.micro str
-      MIMA::ControlUnit::MicroCommand.new str #TODO alow comments in micro programs"
+      MIMA::ControlUnit::MicroCommand.new str 
     end
 
     ##
@@ -67,14 +67,27 @@ module MIMA
     # holding the MicroProgramms which
     # implements the MIMA Comands
     #
-    MICROCOMMANDS = [
-      micro("IAR -> MAR; IAR -> X; R = 1; ADR 0x01;"),  ##
-      micro("O -> Y; R = 1; ADR 0x02;"),                # Fetch Phase:
-      micro("ALU ADD; R = 1; ADR 0x03;"),               # load instrcution add Adress of IRA
-      micro("Z -> IAR; ADR 0x04;"),                     # and increase IRA
-      micro("MDR -> IR; ARD 0x05;"),                    # then Decode loaded instruction
-      micro("D = 1;"),                                  ##
-    ]
+    # Note ach MicroCommand ins proccessed at one clk
+    #
+    MICROCOMMANDS = {
+    # Addr    Command
+      0x00 => micro("IAR -> MAR; IAR -> X; R = 1; ADR 0x01;"),  ##
+      0x01 => micro("O -> Y; R = 1; ADR 0x02;"),                # Fetch Phase:
+      0x02 => micro("ALU ADD; R = 1; ADR 0x03;"),               # load instrcution add Adress of IRA
+      0x03 => micro("Z -> IAR; ADR 0x04;"),                     # and increase IRA
+      0x04 => micro("MDR -> IR; ARD 0x05;"),                    # then Decode loaded instruction
+      0x05 => micro("D = 1;"),                                  ##
+
+      0x06 => micro("IR -> Akku; ADR 0x00;")                    # Load Constant into Akku (LDC)
+
+      0x07 => micro("IR -> MAR; R = 1; ADR 0x08;")              ##
+      0x08 => micro("R = 1; ADR 0x09;")                         # Load Value (LDV)
+      0x09 => micro("R = 1; ADR 0x0A;")                         # loads the value at the address fom IR
+      0x0A => micro("MDR -> Akku; ADR 0x00;")                   ##
+  
+      
+
+    }
 
   end
 
