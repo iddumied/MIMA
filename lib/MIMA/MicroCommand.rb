@@ -373,17 +373,17 @@ module MIMA
       ##
       # Returns the C2 control falg of the ALU
       #
-      def c2; @bits[14]; end
+      def alu_c2; @bits[14]; end
       
       ##
       # Returns the C1 control falg of the ALU
       #
-      def c1; @bits[13]; end
+      def alu_c1; @bits[13]; end
       
       ##
       # Returns the C0 control falg of the ALU
       #
-      def c0; @bits[12]; end
+      def alu_c0; @bits[12]; end
       
       ##
       # Returns whether Memory reads or not (1 / 0)
