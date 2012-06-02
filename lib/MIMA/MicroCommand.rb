@@ -239,7 +239,7 @@ module MIMA
       #
       # where CP can be: R, W, D
       #
-      def allocation op #TODO zuweisung -> englisch
+      def allocation op 
         if FLAGS[op.first].nil?
           raise MicroCodeParseError.new("Unknowen Register: #{ op.first }")
         elsif op.last != "1"
@@ -302,6 +302,108 @@ module MIMA
         @description += "#{ flags } = 1; " unless flags.nil?
         @description += "ADR #{ @bits[0,8].bin_to_hex };"
       end
+
+      public
+      
+      ##
+      # Returns whether the Akku reads or not (1 / 0)
+      #
+      def akku_reads; @bits[27]; end
+
+      ##
+      # Returns whether the Akku writes or not (1 / 0)
+      #
+      def akku_writes; @bits[26]; end
+
+      ##
+      # Returns whether X Register reads or not (1 / 0)
+      #
+      def x_reads; @bits[25]; end
+
+      ##
+      # Returns whether Y Returns reads or not (1 / 0)
+      #
+      def y_reads; @bits[24]; end
+
+      ##
+      # Returns whether Z Returns writes or not (1 / 0)
+      #
+      def z_writes; @bits[23]; end
+
+      ##
+      # Returns whether One Constante write or not (1 / 0)
+      #
+      def one_writes; @bits[22]; end
+
+      ##
+      # Returns whether IAR reads or not (1 / 0)
+      #
+      def iar_reads; @bits[21]; end
+
+      ##
+      # Returns whether IAR write or not (1 / 0)
+      #
+      def iar_writes; @bits[20]; end
+
+      ##
+      # Returns whether IR reads or not (1 / 0)
+      #
+      def ir_reads; @bits[19]; end
+
+      ##
+      # Returns whether IR write or not (1 / 0)
+      #
+      def ir_writes; @bits[18]; end
+
+      ##
+      # Returns whether MDR reads or not (1 / 0)
+      #
+      def mdr_reads; @bits[17]; end
+
+      ##
+      # Returns whether MDR writes or not (1 / 0)
+      #
+      def mdr_writes; @bits[16]; end
+
+      ##
+      # Returns whether MAR reads or not (1 / 0)
+      #
+      def mar_reads; @bits[15]; end
+
+      ##
+      # Returns the C2 control falg of the ALU
+      #
+      def c2; @bits[14]; end
+      
+      ##
+      # Returns the C1 control falg of the ALU
+      #
+      def c1; @bits[13]; end
+      
+      ##
+      # Returns the C0 control falg of the ALU
+      #
+      def c0; @bits[12]; end
+      
+      ##
+      # Returns whether Memory reads or not (1 / 0)
+      #
+      def memory_reads; @bits[11]; end
+
+      ##
+      # Returns whether Memory writes or not (1 / 0)
+      #
+      def memory_writes; @bits[10]; end
+
+      ##
+      # Return whether ControlUnit shoud decode or not
+      #
+      def decode?; (@bits[9] == 1) ? true : false; end
+
+      ##
+      # Returns the address of the next MicroCommand
+      #
+      def next_addr; @bits[0, 8].bin_to_dez; end
 
     end
     
