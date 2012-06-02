@@ -44,6 +44,8 @@ module MIMA
       [1,1,1,0] => "EQL",
       [0,0,0,1] => "JMP",
       [1,0,0,1] => "JMN",
+      [0,1,0,1] => "LDIV",
+      [1,1,0,1] => "STIV",
       [1,1,1,1] => "LC"   # Long Comand
     }
 
@@ -155,6 +157,64 @@ module MIMA
       0x41 => micro("ALU rotate; ADR 0x42")                     #  Rotate Akku Right (RAR)
       0x42 => micro("Z -> Akku; ADR 0x00")                      ##
     }
+
+    ##
+    # Holds the Address of the associated Micro Programm
+    #
+    MICROPROGRAMMS = {
+      # name    address
+      "LDC"  => 0x06,
+      "LDV"  => 0x07,
+      "STV"  => 0x0B,
+      "ADD"  => 0x0F,
+      "AND"  => 0x15,
+      "OR"   => 0x1B,
+      "XOR"  => 0x21,
+      "EQL"  => 0x27,
+      "JMP"  => 0x2D,
+      "JMN"  => 0x2D,
+      "LDIV" => 0x2E,
+      "STIV" => 0x35,
+      "HALT" => 0x3C,
+      "NOT"  => 0x3D,
+      "RAR"  => 0x40,
+    }
+
+    ##
+    # initialize this with a given length of bus pipes
+    # default is 24
+    #
+    def initialize num_pipes = 24
+      @akku   = MIMA::Akku.new num_pipes
+      @iar    = MIMA::Register.new "IAR", num_pipes - 4
+      @one    = MIMA::Constant.new "One", "0x000001".hex_to_bin
+      @ir     = MIMA::IR.new num_pipes
+      @alu    = MIMA::ALU.new num_pipes
+      @x      = @alu.x
+      @y      = @alu.y
+      @z      = @alu.z
+      @memory = MIMA::Memory.new num_pipes - 4, num_pipes
+      @mar    = @memory.mar
+      @mdr    = @memory.mdr
+      
+      # Micro Instruction Pointer
+      @mip = 0x00
+    end
+
+    ##
+    # Sets the Micro Instruction Pointer to a given Value
+    #
+    def mip= val
+      if val.is_a? Fixnum and MICROCOMMANDS[val].nil?
+        raise ArgumentError.new "No MicroCommand at #{ val }"
+      elsif val.class != Fixnum
+        raise ArgumentError.new "Expected Fixnum, but got #{ val.class }"
+      end
+
+      @mip = val
+    end
+
+
 
   end
 
