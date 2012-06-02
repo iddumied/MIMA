@@ -80,7 +80,7 @@ module MIMA
       0x02 => micro("ALU ADD; R = 1; ADR 0x03;"),               # load instrcution add Adress of IRA
       0x03 => micro("Z -> IAR; ADR 0x04;"),                     # and increase IRA
       0x04 => micro("MDR -> IR; ARD 0x05;"),                    # then Decode loaded instruction
-      0x05 => micro("D = 1;"),                                  ##
+      0x05 => micro("D = 1; ADR 0x00;"),                        ##
 
       0x06 => micro("IR -> Akku; ADR 0x00;")                    # Load Constant into Akku (LDC)
 
@@ -199,6 +199,7 @@ module MIMA
       
       # Micro Instruction Pointer
       @mip = 0x00
+      @micro = MICROPROGRAMMS[@mip]
     end
 
     ##
@@ -214,7 +215,54 @@ module MIMA
       @mip = val
     end
 
+    ##
+    # procresses one clk
+    #
+    def clk
+      @micro = MICROCOMMANDS[@mip]
+      @mip   = @micro.next_addr
+      decode if @micro.decode?
+      
+      @akku.read    = @micro.akku_reads
+      @akku.write   = @micro.akku_writes
+      @x.read       = @micro.x_reads
+      @y.read       = @micro.y_reads
+      @z.write      = @micro.z_writes
+      @one.write    = @micro.one_writes
+      @iar.read     = @micro.iar_reads
+      @iar.write    = @micro.iar_writes
+      @ir.read      = @micro.ir_reads
+      @ir.write     = @micro.ir_writes
+      @mdr.read     = @micro.mdr_reads
+      @mrd.write    = @micro.mdr_writes
+      @mar.read     = @micro.mar_reads
+      @alu.c2       = @micro.alu_c2
+      @alu.c1       = @micro.alu_c1
+      @alu.c0       = @micro.alu_c0
+      @memory.read  = @micro.memory_reads
+      @memory.write = @micro.memory_writes
+    end
 
+    ##
+    # Decodes OpCode from the IR and sets the mip
+    # ( Micro Instruction Pointer )
+    #
+    def decode
+      opcode = @ir.opcode
+      
+      if SCOMANDS[opcode[4,4]].nil? or
+          (SCOMANDS[opcode[4,4]] == "LC" and LCOMANDS[opcode[0,4]].nil?
+        raise ArgumentError.new "OpCode #{ opcode.inspect } unknowen"
+      end
+
+      op = (SCOMANDS[opcode[4,4]] == "LC") ? LCOMANDS[opcode[0,4]] : SCOMANDS[opcode[4,4]]
+
+      if op == "JMN"
+        @mip = MICROCOMMANDS[op] if akku.msb == 1
+      else
+        @mip = MICROPROGRAMMS[op]
+      end
+    end
 
   end
 
