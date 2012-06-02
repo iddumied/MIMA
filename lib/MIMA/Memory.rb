@@ -1,5 +1,3 @@
-require './lib/MIMA/Array.rb'
-
 module MIMA
 
   ##
@@ -10,16 +8,14 @@ module MIMA
   # To read and write you need three clks
   #  
   # if read is on:
-  #   1. load the Addres from the SAR Speicher-Address-Register 
-  #      ( Memory-Addres-Register )
+  #   1. load the Addres from the MAR ( Memory-Addres-Register )
   #   2. load the value at the loaded address
-  #   3. store the loaded Value into SDR Speicher-Daten-Register
-  #      ( Memory-Data-Register )
+  #   3. store the loaded Value into MDR  ( Memory-Data-Register )
   #
   # if write is on
-  #   1. load the Address from SAR
-  #   2. load the value from SDR
-  #   3. store the value on the previous loaded addres from SAR
+  #   1. load the Address from MAR
+  #   2. load the value from MDR
+  #   3. store the value on the previous loaded addres from MAR
   #
   class Memory
     
@@ -28,14 +24,14 @@ module MIMA
     # and data length
     #
     def initialize address_len = 20, data_len = 24
-      @sar = MIMA::Register.new "SAR", address_len
-      @sdr = MIMA::Register.new "SDR", data_len
+      @mar = MIMA::Register.new "MAR", address_len
+      @mdr = MIMA::Register.new "MDR", data_len
       @memory = { }
       @clk_state = @read = @write = 0
       @address = @value = nil
     end
 
-    attr_reader :sar, :sdr
+    attr_reader :mar, :mdr
 
     ##
     # Control pipe to set the read status of this
@@ -55,16 +51,14 @@ module MIMA
     # depending on the clk_state if does these things
     # 
     # if read is on:
-    #   1. load the Addres from the SAR Speicher-Address-Register 
-    #      ( Memory-Addres-Register )
+    #   1. load the Addres from the MAR ( Memory-Addres-Register )
     #   2. load the value at the loaded address
-    #   3. store the loaded Value into SDR Speicher-Daten-Register
-    #      ( Memory-Data-Register )
+    #   3. store the loaded Value into MDR  ( Memory-Data-Register )
     #
     # if write is on
-    #   1. load the Address from SAR
-    #   2. load the value from SDR
-    #   3. store the value on the previous loaded addres from SAR
+    #   1. load the Address from MAR
+    #   2. load the value from MDR
+    #   3. store the value on the previous loaded addres from MAR
     #
     def clk
       raise RuntimeError.new("Memory can not read and write at the same time") if @write == 1 and @read == 1
@@ -91,20 +85,20 @@ module MIMA
       case @clk_state
 
         when 0
-          @sar.write = 1
-          @sar.read  = 0
-          @address = @sar.bus_write.bin_to_dez
-          @sar.write = 0
+          @mar.write = 1
+          @mar.read  = 0
+          @address = @mar.bus_write.bin_to_dez
+          @mar.write = 0
 
         when 1
           @value = @memory[@address]
-          @value = Array.new @sdr.length, 0 if @value.nil?
+          @value = Array.new @mdr.length, 0 if @value.nil?
 
         when 2
-          @sdr.read  = 1
-          @sdr.write = 0
-          @sdr.bus_read @value
-          @sdr.read = 0
+          @mdr.read  = 1
+          @mdr.write = 0
+          @mdr.bus_read @value
+          @mdr.read = 0
 
       end
 
@@ -122,16 +116,16 @@ module MIMA
       case @clk_state
 
         when 0
-          @sar.write = 1
-          @sar.read  = 0
-          @address = @sar.bus_write.bin_to_dez
-          @sar.write = 0
+          @mar.write = 1
+          @mar.read  = 0
+          @address = @mar.bus_write.bin_to_dez
+          @mar.write = 0
 
         when 1
-          @sdr.write = 1
-          @sdr.read  = 0
-          @value = @sdr.bus_write
-          @sdr.write = 0
+          @mdr.write = 1
+          @mdr.read  = 0
+          @value = @mdr.bus_write
+          @mdr.write = 0
 
         when 2
           @memory[@address] = @value
