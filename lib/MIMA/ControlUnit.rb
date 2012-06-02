@@ -97,16 +97,38 @@ module MIMA
       0x13 => micro("ALU ADD; ADR 0x14;")                       # Saves the Result in Akku
       0x14 => micro("Z -> Akku; ADR 0x00;")                     ##
 
-      0x15 => micro("")
-      0x16 => micro("")
-      0x17 => micro("")
-      0x18 => micro("")
-      0x19 => micro("")
-      0x1A => micro("")
-      0x1B => micro("")
-      0x1C => micro("")
-      0x1D => micro("")
-      0x1F => micro("")
+      0x15 => micro("IR -> MAR; R = 1; ADR 0x16;")              ##
+      0x16 => micro("Akku -> X; R = 1; ADR 0x17;")              # Akku AND value at the Addres from IR (AND)
+      0x17 => micro("R = 1; ADR 0x18;")                         # loads the Akku into X
+      0x18 => micro("MDR -> Y; ADR 0x19;")                      # loads the value from the Memory into Y
+      0x19 => micro("ALU AND; ADR 0x1A;")                       # Saves the Result in Akku
+      0x1A => micro("Z -> Akku; ADR 0x00;")                     ##
+
+      0x1B => micro("IR -> MAR; R = 1; ADR 0x1C;")              ##
+      0x1C => micro("Akku -> X; R = 1; ADR 0x1D;")              # Akku OR value at the Addres from IR (AND)
+      0x1D => micro("R = 1; ADR 0x1E;")                         # loads the Akku into X
+      0x1E => micro("MDR -> Y; ADR 0x1F;")                      # loads the value from the Memory into Y
+      0x1F => micro("ALU OR; ADR 0x20;")                        # Saves the Result in Akku
+      0x20 => micro("Z -> Akku; ADR 0x00;")                     ##
+
+      0x21 => micro("IR -> MAR; R = 1; ADR 0x22;")              ##
+      0x22 => micro("Akku -> X; R = 1; ADR 0x23;")              # Akku XOR value at the Addres from IR (XOR)
+      0x23 => micro("R = 1; ADR 0x24;")                         # loads the Akku into X
+      0x24 => micro("MDR -> Y; ADR 0x25;")                      # loads the value from the Memory into Y
+      0x25 => micro("ALU XOR; ADR 0x26;")                       # Saves the Result in Akku
+      0x26 => micro("Z -> Akku; ADR 0x00;")                     ##
+
+      0x27 => micro("IR -> MAR; R = 1; ADR 0x28;")              ##
+      0x28 => micro("Akku -> X; R = 1; ADR 0x29;")              # Akku EQL value at the Addres from IR (XOR)
+      0x29 => micro("R = 1; ADR 0x2A;")                         # loads the Akku into X
+      0x2A => micro("MDR -> Y; ADR 0x2B;")                      # loads the value from the Memory into Y
+      0x2B => micro("ALU EQL; ADR 0x2C;")                       # Saves the Result in Akku
+      0x2C => micro("Z -> Akku; ADR 0x00;")                     ##
+
+      0x2D => micro("IR -> IAR; ADR 0x00;")                     # Jumps to the Addres from IR (JMP)
+      0x2E => micro("")
+      0x2F => micro("")
+      0x30 => micro("")
 
     }
 
