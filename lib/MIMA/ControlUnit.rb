@@ -126,10 +126,17 @@ module MIMA
       0x2C => micro("Z -> Akku; ADR 0x00;")                     ##
 
       0x2D => micro("IR -> IAR; ADR 0x00;")                     # Jumps to the Addres from IR (JMP)
-      0x2E => micro("")
-      0x2F => micro("")
-      0x30 => micro("")
 
+      0x2E => micro("ADR 0x2F;")                                # endless loop (HALT)
+      0x2F => micro("ADR 0x2E;")                                # stops the MIMA
+
+      0x30 => micro("Akku -> X; ADR 0x31;")                     ##
+      0x31 => micro("ALU NOT; ADR 0x32")                        # one complement (NOT) of Akku
+      0x32 => micro("Z -> Akku; ADR 0x00")                      ##
+
+      0x33 => micro("Akku -> X; ADR 0x34;")                     ##
+      0x34 => micro("ALU rotate; ADR 0x35")                     #  Rotate Akku Right (RAR)
+      0x35 => micro("Z -> Akku; ADR 0x00")                      ##
     }
 
   end
