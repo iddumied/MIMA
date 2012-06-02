@@ -85,7 +85,28 @@ module MIMA
       0x09 => micro("R = 1; ADR 0x0A;")                         # loads the value at the address fom IR
       0x0A => micro("MDR -> Akku; ADR 0x00;")                   ##
   
-      
+      0x0B => micro("Akku -> MDR; ADR 0x0C;")                   ##
+      0x0C => micro("IR -> MAR; W = 1; ADR 0x0D;")              # Store Value (STV)
+      0x0D => micro("W = 1; ADR 0x0E")                          # stores the value from Akku at the address from IR
+      0x0E => micro("W = 1; ADR 0x00")                          ##
+
+      0x0F => micro("IR -> MAR; R = 1; ADR 0x10;")              ##
+      0x10 => micro("Akku -> X; R = 1; ADR 0x11;")              # Akku + value at the Addres from IR (ADD)
+      0x11 => micro("R = 1; ADR 0x12;")                         # loads the Akku into X
+      0x12 => micro("MDR -> Y; ADR 0x13;")                      # loads the value from the Memory into Y
+      0x13 => micro("ALU ADD; ADR 0x14;")                       # Saves the Result in Akku
+      0x14 => micro("Z -> Akku; ADR 0x00;")                     ##
+
+      0x15 => micro("")
+      0x16 => micro("")
+      0x17 => micro("")
+      0x18 => micro("")
+      0x19 => micro("")
+      0x1A => micro("")
+      0x1B => micro("")
+      0x1C => micro("")
+      0x1D => micro("")
+      0x1F => micro("")
 
     }
 
