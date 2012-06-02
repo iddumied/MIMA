@@ -13,7 +13,7 @@ module MIMA
     # the last significant pipes.
     #
     def initialize name, bits
-      @name = name
+      super name, bits.length
       @bits = bits
       @write = 0
     end
