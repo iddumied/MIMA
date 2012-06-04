@@ -40,6 +40,26 @@ module MIMA
       @alu.clk
     end
 
+    ##
+    # Lets the Mima procress an given command
+    #
+    def run command
+      if command.is_a? String
+        command = MIMA::MimaCommand.new command
+      elsif command.class != MIMA::MimaCommand
+        raise ArgumentError.new "not an MIMA command"
+      end
+
+      # load command into instruction register
+      @ir.content = command.bits
+
+      # set controlunit of decode
+      @controlunit.mip = 0x05
+
+      # run the microprogramm
+      clk until @controlunit.mip == 0x00
+    end
+
   end
   
 
