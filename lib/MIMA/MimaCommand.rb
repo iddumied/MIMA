@@ -63,6 +63,35 @@ module MIMA
     }
 
     ##
+    # The Short Comans (4 Byte) Bits => Ascii equivalent
+    #
+    SCOMANDS = {
+      [0,0,0,0] => "LDC",
+      [1,0,0,0] => "LDV",
+      [0,1,0,0] => "STV",
+      [1,1,0,0] => "ADD",
+      [0,0,1,0] => "AND",
+      [1,0,1,0] => "OR",
+      [0,1,1,0] => "XOR",
+      [1,1,1,0] => "EQL",
+      [0,0,0,1] => "JMP",
+      [1,0,0,1] => "JMN",
+      [0,1,0,1] => "LDIV",
+      [1,1,0,1] => "STIV",
+      [1,1,1,1] => "LC"   # Long Comand
+    }
+
+    ##
+    # The Long Commands (8 Byte) Bits => Ascii equivalent
+    #
+    LCOMANDS = {
+      [0,0,0,0] => "HALT",
+      [1,0,0,0] => "NOT",
+      [0,1,0,0] => "RAR"
+
+    }
+
+    ##
     # initialize this with an given human readable command
     # or an bit array
     #
@@ -94,7 +123,24 @@ module MIMA
       end
 
     end
+    
 
+    ##
+    # decode an validates the bits array of this
+    #
+    def decode
+      opcode = @bits[@bits.length - 8, 8]
+
+      if SCOMANDS[opcode[4,4]].nil? or
+          (SCOMANDS[opcode[4,4]] == "LC" and LCOMANDS[opcode[0,4]].nil?)
+        raise ArgumentError.new "OpCode #{ opcode.inspect } unknowen"
+      end
+
+      op = (SCOMANDS[opcode[4,4]] == "LC") ? LCOMANDS[opcode[0,4]] : SCOMANDS[opcode[4,4]]
+      addr = (SCOMANDS[opcode[4,4]] == "LC") ? "" : @bits[0, @bits.length - 4].bin_to_hex
+
+      @description = "#{ op } #{ addr }"
+    end
 
   end
 
