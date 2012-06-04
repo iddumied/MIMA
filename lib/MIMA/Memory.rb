@@ -34,6 +34,33 @@ module MIMA
     attr_reader :mar, :mdr
 
     ##
+    # accress a valu in the memory directly by the user
+    # (not a real MIMA function)
+    #
+    def [] index
+      if index.class != Fixnum or index >= 2**(@mar.length) or index < 0
+        raise ArgumentError.new "wrong address #{ index.inspect }"
+      end
+
+      return Array.new(@mdr.length, 0) if @memory[index].nil?
+      @memory[index]
+    end
+
+    ##
+    # insert a value into the memory, used to control
+    # the MIMA state direcly by the user (not a real MIMA function)
+    #
+    def []= index, value
+      if index.class =! Fixnum or value.class != Array or
+          index >= 2**(@mar.length) or index < 0 or value.length != @mdr.length
+
+        raise ArgumentError.new "wrong index and / or value given"
+      end
+
+      @memory[index] = value
+    end
+
+    ##
     # Control pipe to set the read status of this
     #
     def read= r
