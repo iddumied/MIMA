@@ -108,6 +108,16 @@ module MIMA
       end
     end
 
+    ##
+    # Returns the description of this
+    #
+    def description; @description.clone; end
+
+    ##
+    # Returns the bits of this
+    #
+    def bits; @bits.clone; end
+
     private
 
     ##
@@ -117,8 +127,8 @@ module MIMA
       args = @description.split(" ")
 
       case args.length
-        when 1 then @bits = COMMANDS[args.first].hex_to_bin + args.last.hex_to_bin
-        when 2 then @bits = COMMANDS[args.first].hex_to_bin + Array.new(16, 0)
+        when 1 then @bits = Array.new(16, 0) + COMMANDS[args.first].hex_to_bin
+        when 2 then @bits = args.last.hex_to_bin + COMMANDS[args.first].hex_to_bin
         else raise MimaCodeParseError.new "wrong command length: #{ args.length }"
       end
 

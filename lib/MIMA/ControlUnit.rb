@@ -236,7 +236,7 @@ module MIMA
       @ir.read      = @micro.ir_reads
       @ir.write     = @micro.ir_writes
       @mdr.read     = @micro.mdr_reads
-      @mrd.write    = @micro.mdr_writes
+      @mdr.write    = @micro.mdr_writes
       @mar.read     = @micro.mar_reads
       @alu.c2       = @micro.alu_c2
       @alu.c1       = @micro.alu_c1

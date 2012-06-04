@@ -19,11 +19,10 @@ module MIMA
     end
 
     ##
-    # Raises an Error beacuse Constants can not read from the Bus
-    # thei can onely write its initial conten to the Bus
+    # just implementet to prevent errors
     #
-    def bus_read
-      raise NoMethodError.new("Constants can not read from the Bus")
+    def bus_read val
+      "Constants can not read from the Bus"
     end
 
     ##
