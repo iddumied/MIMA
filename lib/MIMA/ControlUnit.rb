@@ -202,6 +202,8 @@ module MIMA
       @micro = MICROPROGRAMMS[@mip]
     end
 
+    attr_reader :akku, :iar, :one, :ir, :alu, :x, :y, :z, :memory, :mar, :mdr
+
     ##
     # Sets the Micro Instruction Pointer to a given Value
     #
@@ -251,7 +253,7 @@ module MIMA
       opcode = @ir.opcode
       
       if SCOMANDS[opcode[4,4]].nil? or
-          (SCOMANDS[opcode[4,4]] == "LC" and LCOMANDS[opcode[0,4]].nil?
+          (SCOMANDS[opcode[4,4]] == "LC" and LCOMANDS[opcode[0,4]].nil?)
         raise ArgumentError.new "OpCode #{ opcode.inspect } unknowen"
       end
 
