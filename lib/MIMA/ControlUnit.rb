@@ -79,7 +79,7 @@ module MIMA
       0x01 => micro("O -> Y; R = 1; ADR 0x02;"),                # Fetch Phase:
       0x02 => micro("ALU ADD; R = 1; ADR 0x03;"),               # load instrcution add Adress of IRA
       0x03 => micro("Z -> IAR; ADR 0x04;"),                     # and increase IRA
-      0x04 => micro("MDR -> IR; ARD 0x05;"),                    # then Decode loaded instruction
+      0x04 => micro("MDR -> IR; ADR 0x05;"),                    # then Decode loaded instruction
       0x05 => micro("D = 1; ADR 0x00;"),                        ##
 
       0x06 => micro("IR -> Akku; ADR 0x00;"),                   # Load Constant into Akku (LDC)

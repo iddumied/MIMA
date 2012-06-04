@@ -76,7 +76,7 @@ module MIMA
         "Akku" => 27,
         "X"    => 25,
         "Y"    => 24,
-        "IRA"  => 21,
+        "IAR"  => 21,
         "IR"   => 19,
         "MDR"  => 17,
         "MAR"  => 15
@@ -90,7 +90,7 @@ module MIMA
         "Akku" => 26,
         "Z"    => 23,
         "O"    => 22,
-        "IRA"  => 20,
+        "IAR"  => 20,
         "IR"   => 18,
         "MDR"  => 16
       }
@@ -205,7 +205,7 @@ module MIMA
       #
       def set_register_op op
         unless op.length == 3
-          raise MicroCodeParseError.new("not an Micro Code Operation")
+          raise MicroCodeParseError.new("not a Micro Code Operation: #{ op }")
         end
 
         case op[1]
@@ -224,7 +224,7 @@ module MIMA
       #
       def reg_copy op
         if WRITE[op.first].nil?
-          raise MicroCodeParseError.new("Register #{ op } unknowen / can not read")
+          raise MicroCodeParseError.new("Register #{ op } unknowen / can not write")
         elsif READ[op.last].nil?
           raise MicroCodeParseError.new("Register #{ op } unknowen / can not read")
         end
