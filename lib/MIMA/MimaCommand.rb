@@ -35,6 +35,15 @@ module MIMA
   #
   class MimaCommand
     
+    ##
+    # implementaition of an Parse error
+    #
+    class MimaCodeParseError < RuntimeError
+      def initialize str
+        super("Error while parsing! " + str)
+      end
+    end
+      
     COMMANDS = {
       "LDC"  => "0x0",
       "LDV"  => "0x1",
@@ -59,7 +68,6 @@ module MIMA
     #
     def initialize arg
       if arg.is_a? String
-        @bits = Array.new 28, 0
         @description = arg
         parse 
       elsif arg.is_a? Array
@@ -69,9 +77,24 @@ module MIMA
       else
         raise ArgumentError.new "expected String or Array, but got #{ arg.class }"
       end
-      
+    end
+
+    private
+
+    ##
+    # parses an human readable command into its equivalent bits
+    #
+    def parse
+      args = @description.split(" ")
+
+      case args.length
+        when 1 then @bits = COMMANDS[args.first].hex_to_bin + args.last.hex_to_bin
+        when 2 then @bits = COMMANDS[args.first].hex_to_bin + Array.new(16, 0)
+        else raise MimaCodeParseError.new "wrong command length: #{ args.length }"
+      end
 
     end
+
 
   end
 
