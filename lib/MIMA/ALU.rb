@@ -46,6 +46,34 @@ module MIMA
     def c2= c; @c2 = (c == 1) ? 1 : 0; end
 
     ##
+    # Returns the currents state of this, depending on the control pipes:
+    #
+    # C2 C1 C0 | ALU Operation
+    # -----------------------------------------
+    #  0  0  0 | Z -> Z (do nothing)
+    #  0  0  1 | X + Y -> Z
+    #  0  1  0 | rotate X right -> Z
+    #  0  1  1 | X AND Y -> Z
+    #  1  0  0 | X OR Y -> Z
+    #  1  0  1 | X XOR Y -> Z
+    #  1  1  0 | one complement (NOT) of X -> Z
+    #  1  1  1 | if X == Y, -1 -> Z else 0 -> Z
+    #
+    def state
+      case [@c2, @c1, @c0]
+        when [0,0,0] then "Z -> Z"
+        when [0,0,1] then "X + Y"
+        when [0,1,0] then "rotate x"
+        when [0,1,1] then "x & y"
+        when [1,0,0] then "x | y"
+        when [1,0,1] then "x ^ y"
+        when [1,1,0] then "~ x"
+        when [1,1,1] then "x == y"
+        else raise RuntimeError.new "wrong alu operation: #{ [@c2, @c1, @c0] }"
+      end
+    end
+
+    ##
     # depending on the control pipes it calculases:
     #
     # C2 C1 C0 | ALU Operation
@@ -67,9 +95,9 @@ module MIMA
         when [0,1,1] then x_and_y;    puts "[DEBUG] ALU x & y"
         when [1,0,0] then x_or_y;     puts "[DEBUG] ALU x | y"
         when [1,0,1] then x_xor_y;    puts "[DEBUG] ALU x ^ y"
-        when [2,1,0] then not_x;      puts "[DEBUG] ALU ~ x"
+        when [1,1,0] then not_x;      puts "[DEBUG] ALU ~ x"
         when [1,1,1] then x_equal_y;  puts "[DEBUG] ALU x == y"
-        else return false
+        else raise RuntimeError.new "wrong alu operation: #{ [@c2, @c1, @c0] }"
       end
       @z
     end

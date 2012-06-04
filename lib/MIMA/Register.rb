@@ -20,6 +20,11 @@ module MIMA
     end
 
     ##
+    # Returns the name of this
+    #
+    def name; @name.clone; end
+
+    ##
     # Read method for bits for user control
     # (not a original mima function)
     #

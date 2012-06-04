@@ -60,6 +60,64 @@ module MIMA
       clk until @controlunit.mip == 0x00
     end
 
+    ##
+    # Implements a Shell for the MIMA to play with it
+    # you can use all MIMA comands plus som aditional commands:
+    #
+    # command      | description
+    # -------------+------------
+    # e, exit      | exits this shell
+    # q, quit      | exits this shell
+    # h, help      | prints an help overview
+    # p, print <r> | prints the content of register <r>
+    #
+    def sh prompt = "mima ~> "
+      print prompt
+      input = gets.chop
+
+      until ["e", "q", "exit", "quit"].include? input.downcase
+        args = input.split " "
+        
+        if ControlUnit::MICROPROGRAMMS[args.first] != nil
+          run input
+        elsif ["p", "print"].include? args.first.downcase
+          if args.include? "ALU" or args.include? "alu"
+            puts "ALU: #{ @alu.state }"
+            args.delete("alu")
+            args.delete("ALU")
+          end
+          print inspect_register(args[1, args.length - 1])
+        end
+
+        print prompt
+        input = gets.chop
+      end
+      
+    end
+
+    ##
+    # Returns the content of an Register or an error message if 
+    # there is no such register
+    #
+    def inspect_register regs
+      str = ""
+
+      regs.each do |reg|
+        found = false
+        @register.each do |r|
+          if r.name.upcase == reg.upcase
+            str += "#{ r.name }: #{ r.to_hex }\n" 
+            found = true
+            break                   
+          end
+        end
+
+        str +="unknowen Register #{ reg }\n" unless found
+      end
+
+      str
+    end
+
   end
   
 
