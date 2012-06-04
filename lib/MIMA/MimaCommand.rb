@@ -53,6 +53,26 @@ module MIMA
       "RAR"  => "0xF3"
     }
 
+    ##
+    # initialize this with an given human readable command
+    # or an bit array
+    #
+    def initialize arg
+      if arg.is_a? String
+        @bits = Array.new 28, 0
+        @description = arg
+        parse 
+      elsif arg.is_a? Array
+        @bits = arg
+        @description = ""
+        decode
+      else
+        raise ArgumentError.new "expected String or Array, but got #{ arg.class }"
+      end
+      
+
+    end
+
   end
 
 end
