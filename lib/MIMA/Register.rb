@@ -20,6 +20,26 @@ module MIMA
     end
 
     ##
+    # Read method for bits for user control
+    # (not a original mima function)
+    #
+    def content; @bits.clone; end
+
+    ##
+    # A setter method for bits for user control
+    # (not a original mima function)
+    #
+    def content= bits
+      if bits.class != Array or (bits.is_a? Array and bits.length != @bits.length)
+        raise ArgumentError.new "wrong bits given"
+      end
+
+      bits.each_with_index do |e, i|
+        @bits[i] = (e == 1) ? 1 : 0
+      end
+    end
+
+    ##
     # Reads the last significant bits (pipes) from the bus
     # if this should read
     #
