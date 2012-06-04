@@ -106,6 +106,10 @@ module MIMA
       str += "\n"
     end
     
+    ##
+    # returns the Hex represenation of this
+    #
+    def to_hex; @bits.bin_to_hex; end
 
   end
 
