@@ -30,6 +30,16 @@ module MIMA
       @register.each { |r| @bus.add r }
     end
 
+    ##
+    # processes one clk
+    #
+    def clk
+      @controlunit.clk
+      @bus.clk
+      @memory.clk
+      @alu.clk
+    end
+
   end
   
 
