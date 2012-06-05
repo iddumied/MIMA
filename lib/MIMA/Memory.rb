@@ -112,20 +112,14 @@ module MIMA
       case @clk_state
 
         when 0
-          @mar.write = 1
-          @mar.read  = 0
-          @address = @mar.bus_write.bin_to_dez
-          @mar.write = 0
+          @address = @mar.content.bin_to_dez
 
         when 1
           @value = @memory[@address]
           @value = Array.new @mdr.length, 0 if @value.nil?
 
         when 2
-          @mdr.read  = 1
-          @mdr.write = 0
-          @mdr.bus_read @value
-          @mdr.read = 0
+          @mdr.content = @value
 
       end
 
@@ -143,16 +137,10 @@ module MIMA
       case @clk_state
 
         when 0
-          @mar.write = 1
-          @mar.read  = 0
-          @address = @mar.bus_write.bin_to_dez
-          @mar.write = 0
+          @address = @mar.content.bin_to_dez
 
         when 1
-          @mdr.write = 1
-          @mdr.read  = 0
-          @value = @mdr.bus_write
-          @mdr.write = 0
+          @value = @mdr.content
 
         when 2
           @memory[@address] = @value
