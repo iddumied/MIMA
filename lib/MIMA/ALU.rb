@@ -108,15 +108,8 @@ module MIMA
     # Z -> Z (do nothing)
     #
     def do_nothing
-      @z.write = 1
-      @z.read  = 0
-      z = @z.bus_write
-
-      @z.write = 0
-      @z.read  = 1
-      @z.bus_read z
-
-      @z.read  = 0
+      z = @z.content
+      @z.content = z
     end
 
     ##
@@ -125,13 +118,8 @@ module MIMA
     # X + Y -> Z
     #
     def x_add_y
-      @x.write = 1
-      @x.read  = 0
-      @y.write = 1
-      @y.read  = 0
-
-      x = @x.bus_write
-      y = @y.bus_write
+      x = @x.content
+      y = @y.content
       z = Array.new @x.length, 0
 
       carry = 0
@@ -143,13 +131,7 @@ module MIMA
         carry = tmp / 2
       end
 
-      @x.write = 0
-      @y.write = 0
-      @z.write = 0
-      @z.read  = 1
-      @z.bus_read z
-
-      @z.read = 0
+      @z.content = z
     end
     
     ##
@@ -158,21 +140,14 @@ module MIMA
     # rotate X right -> Z
     #
     def rotate_x
-      @x.write = 1
-      @x.read  = 0
-      @z.write = 0
-      @z.read  = 1
-
-      x = @x.bus_write
+      x = @x.content
       z = Array.new @z.length, 0
-      @x.write = 0
 
       for i in (0...@z.length) do
         z[i] = x[(i - 1) % @z.length]
       end
 
-      @z.bus_read z
-      @z.read = 0
+      @z.content = z
     end
     
     ##
@@ -181,23 +156,15 @@ module MIMA
     # X AND Y -> Z
     #
     def x_and_y
-      @x.read  = 0
-      @x.write = 1
-      @y.read  = 0
-      @y.write = 1
-      @z.read  = 1
-      @z.write = 0
-
-      x = @x.bus_write
-      y = @y.bus_write
+      x = @x.content
+      y = @y.content
       z = Array.new @z.length, 0
 
       for i in (0...@z.length) do
         z[i] = x[i] & y[i]
       end
 
-      @z.bus_read z
-      @z.read = 0
+      @z.content = z
     end
 
     ##
@@ -206,23 +173,15 @@ module MIMA
     # X OR Y -> Z
     #
     def x_or_y
-      @x.read  = 0
-      @x.write = 1
-      @y.read  = 0
-      @y.write = 1
-      @z.read  = 1
-      @z.write = 0
-
-      x = @x.bus_write
-      y = @y.bus_write
+      x = @x.content
+      y = @y.content
       z = Array.new @z.length, 0
 
       for i in (0...@z.length) do
         z[i] = x[i] | y[i]
       end
 
-      @z.bus_read z
-      @z.read = 0
+      @z.content = z
     end
 
     ##
@@ -231,23 +190,15 @@ module MIMA
     # X XOR Y -> Z
     #
     def x_xor_y
-      @x.read  = 0
-      @x.write = 1
-      @y.read  = 0
-      @y.write = 1
-      @z.read  = 1
-      @z.write = 0
-
-      x = @x.bus_write
-      y = @y.bus_write
+      x = @x.content
+      y = @y.content
       z = Array.new @z.length, 0
 
       for i in (0...@z.length) do
         z[i] = x[i] ^ y[i]
       end
 
-      @z.bus_read z
-      @z.read = 0
+      @z.content = z
     end
 
     ##
@@ -257,20 +208,14 @@ module MIMA
     # ( NOT X -> Z )
     #
     def not_x
-      @x.read  = 0
-      @x.write = 1
-      @z.read  = 1
-      @z.write = 0
-
-      x = @x.bus_write
+      x = @x.content
       z = Array.new @z.length, 0
 
       for i in (0...@z.length) do
         z[i] = (x[i] == 1) ? 0 : 1
       end
 
-      @z.bus_read z
-      @z.read = 0
+      @z.content = z
     end
 
     ##
@@ -279,15 +224,8 @@ module MIMA
     # if X == Y, -1 -> Z else 0 -> Z
     #
     def x_equal_y
-      @x.read  = 0
-      @x.write = 1
-      @y.read  = 0
-      @y.write = 1
-      @z.read  = 1
-      @z.write = 0
-
-      x = @x.bus_write
-      y = @y.bus_write
+      x = @x.content
+      y = @y.content
       z = Array.new @z.length, 1
 
       for i in (0...@z.length) do
@@ -297,8 +235,7 @@ module MIMA
         end
       end
 
-      @z.bus_read z
-      @z.read = 0
+      @z.content = z
     end
 
   end
