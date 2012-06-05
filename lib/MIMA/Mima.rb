@@ -40,9 +40,6 @@ module MIMA
       @bus.clk
       @memory.clk
       @alu.clk
-      puts "[DEBUG] #{ @controlunit.micro.description }"
-      puts alu.state
-      puts alu.z.content.bin_to_dez
     end
 
     ##

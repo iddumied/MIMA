@@ -95,8 +95,6 @@ module MIMA
         end
       end
 
-      puts "[DEBUG] #{ @pipes.bin_to_dez }"
-
       # write to components
       @components.each { |c| c.bus_read @pipes.clone }
 
