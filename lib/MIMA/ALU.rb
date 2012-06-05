@@ -91,12 +91,12 @@ module MIMA
       case [@c2, @c1, @c0]
         when [0,0,0] then do_nothing
         when [0,0,1] then x_add_y
-        when [0,1,0] then rotate_x;   puts "[DEBUG] ALU rotate x"
-        when [0,1,1] then x_and_y;    puts "[DEBUG] ALU x & y"
-        when [1,0,0] then x_or_y;     puts "[DEBUG] ALU x | y"
-        when [1,0,1] then x_xor_y;    puts "[DEBUG] ALU x ^ y"
-        when [1,1,0] then not_x;      puts "[DEBUG] ALU ~ x"
-        when [1,1,1] then x_equal_y;  puts "[DEBUG] ALU x == y"
+        when [0,1,0] then rotate_x
+        when [0,1,1] then x_and_y
+        when [1,0,0] then x_or_y
+        when [1,0,1] then x_xor_y
+        when [1,1,0] then not_x
+        when [1,1,1] then x_equal_y
         else raise RuntimeError.new "wrong alu operation: #{ [@c2, @c1, @c0] }"
       end
       @z
