@@ -57,15 +57,15 @@ module MIMA
       "JMN"  => "0x9",
       "LDIV" => "0xA",
       "STIV" => "0xB",
-      "HALT" => "0xF1",
-      "NOT"  => "0xF2",
-      "RAR"  => "0xF3"
+      "HALT" => "0xF0",
+      "NOT"  => "0xF1",
+      "RAR"  => "0xF2"
     }
 
     ##
     # The Short Comans (4 Byte) Bits => Ascii equivalent
     #
-    SCOMANDS = {
+    SCOMMANDS = {
       [0,0,0,0] => "LDC",
       [1,0,0,0] => "LDV",
       [0,1,0,0] => "STV",
@@ -84,7 +84,7 @@ module MIMA
     ##
     # The Long Commands (8 Byte) Bits => Ascii equivalent
     #
-    LCOMANDS = {
+    LCOMMANDS = {
       [0,0,0,0] => "HALT",
       [1,0,0,0] => "NOT",
       [0,1,0,0] => "RAR"
@@ -141,15 +141,15 @@ module MIMA
     def decode
       opcode = @bits[@bits.length - 8, 8]
 
-      if SCOMANDS[opcode[4,4]].nil? or
-          (SCOMANDS[opcode[4,4]] == "LC" and LCOMANDS[opcode[0,4]].nil?)
+      if SCOMMANDS[opcode[4,4]].nil? or
+          (SCOMMANDS[opcode[4,4]] == "LC" and LCOMMANDS[opcode[0,4]].nil?)
         raise ArgumentError.new "OpCode #{ opcode.inspect } unknowen"
       end
 
-      op = (SCOMANDS[opcode[4,4]] == "LC") ? LCOMANDS[opcode[0,4]] : SCOMANDS[opcode[4,4]]
-      addr = (SCOMANDS[opcode[4,4]] == "LC") ? "" : @bits[0, @bits.length - 4].bin_to_hex
+      op = (SCOMMANDS[opcode[4,4]] == "LC") ? LCOMMANDS[opcode[0,4]] : SCOMMANDS[opcode[4,4]]
+      addr = (SCOMMANDS[opcode[4,4]] == "LC") ? "" : " " + @bits[0, @bits.length - 4].bin_to_hex
 
-      @description = "#{ op } #{ addr }"
+      @description = "#{ op }#{ addr }"
     end
 
   end
