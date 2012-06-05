@@ -199,10 +199,10 @@ module MIMA
       
       # Micro Instruction Pointer
       @mip = 0x00
-      @micro = MICROPROGRAMMS[@mip]
+      @micro = MICROCOMMANDS[@mip]
     end
 
-    attr_reader :akku, :iar, :one, :ir, :alu, :x, :y, :z, :memory, :mar, :mdr, :mip
+    attr_reader :akku, :iar, :one, :ir, :alu, :x, :y, :z, :memory, :mar, :mdr, :mip, :micro
 
     ##
     # Sets the Micro Instruction Pointer to a given Value

@@ -30,6 +30,8 @@ module MIMA
       @register.each { |r| @bus.add r }
     end
 
+    attr_reader :controlunit, :akku, :ira, :one, :ir, :alu, :x, :y, :z, :memory, :mar, :mdr, :bus, :register
+
     ##
     # processes one clk
     #
@@ -38,6 +40,9 @@ module MIMA
       @bus.clk
       @memory.clk
       @alu.clk
+      puts "[DEBUG] #{ @controlunit.micro.description }"
+      puts alu.state
+      puts alu.z.content.bin_to_dez
     end
 
     ##

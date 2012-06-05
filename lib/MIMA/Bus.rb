@@ -76,6 +76,7 @@ module MIMA
     # so ist on the component site to eccept the read or write
     #
     def clk
+      write = nil
       
       # clear all pipes
       @pipes.map!{ 0 }
@@ -83,9 +84,18 @@ module MIMA
       # read from components
       @components.each do |c|
         c.bus_write.each_with_index do |pipe, i|
-          @pipes[i] = 1 if pipe == 1
+          if pipe == 1
+            if write != nil and write != c.name
+              raise RuntimeError.new "Collection detected! #{ write } and #{ c.name } writing"
+            end
+
+            @pipes[i] = 1 
+            write = c.name
+          end
         end
       end
+
+      puts "[DEBUG] #{ @pipes.bin_to_dez }"
 
       # write to components
       @components.each { |c| c.bus_read @pipes.clone }

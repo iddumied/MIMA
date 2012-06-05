@@ -89,7 +89,7 @@ module MIMA
     #
     def clk
       case [@c2, @c1, @c0]
-        when [0,0,0] then do_nothing
+        when [0,0,0] then do_nothing;
         when [0,0,1] then x_add_y
         when [0,1,0] then rotate_x
         when [0,1,1] then x_and_y
