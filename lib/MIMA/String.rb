@@ -1,3 +1,5 @@
+require './lib/MIMA/Array.rb'
+
 class String
 
   ##
@@ -31,5 +33,11 @@ class String
     ary
   end
 
+  ##
+  # converts an hex String "0x*" into its decimal aquivalent
+  #
+  def hex_to_dez
+    self.hex_to_bin.bin_to_dez
+  end
 
 end
