@@ -26,10 +26,9 @@ module MIMA
     # pipe sates.
     #
     def add component
-      if component.methods.include?(:bus_read) and
-          component.methods.include?(:bus_write) and
-            component.methods.include?(:describe) and
-              component.methods.include?(:inspect)
+      if [ :bus_read, :bus_write, :describe, :inspect ].map do |s| 
+          component.methods.include? s 
+        end.all?
         
         @components << component
       else
@@ -44,15 +43,10 @@ module MIMA
       str = "#<MIMA::Bus pipes="
 
       @pipes.reverse.each { |p| str += p.to_s }
-      if @components.empty?
-        str += " components=[]>" 
-      else
-        str += " components=["
-      end
+      str += @components.empty? ? " components=[]>" : " components=["
 
       @components.each do |c|
-        unless c == @components.last then str += "#{ c }, "
-        else str += "#{ c.inspect }]>" end
+        str += c != @components.last ? "#{c}, " : "#{c.inspect}]"
       end
 
       str 
