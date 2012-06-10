@@ -1,7 +1,9 @@
+require './lib/MIMA/Array.rb'
+
 class Fixnum
 
   ##
-  # converts this into an binary array
+  # converts this into a binary array
   #
   def to_bin_ary length = 0
     x = self
@@ -15,6 +17,13 @@ class Fixnum
     ary << 0 until ary.length == length
 
     ary
+  end
+
+  ##
+  # converts this into a hex number
+  #
+  def to_hex bit_len = 0
+    self.to_bin_ary(bit_len).bin_to_hex
   end
 
 end
