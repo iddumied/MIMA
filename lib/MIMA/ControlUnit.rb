@@ -265,7 +265,7 @@ module MIMA
       op = (SCOMANDS[opcode[4,4]] == "LC") ? LCOMANDS[opcode[0,4]] : SCOMANDS[opcode[4,4]]
 
       if op == "JMN"
-        @mip = MICROCOMMANDS[op] if akku.msb == 1
+        @mip = MICROPROGRAMMS[op] if akku.msb == 1
       else
         @mip = MICROPROGRAMMS[op]
       end
