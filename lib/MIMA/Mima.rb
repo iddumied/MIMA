@@ -165,6 +165,7 @@ module MIMA
 
       until cur_cmd.description.include? "HALT"
         clk
+        yield if block_given?
         sleep frequenz
       end
 
