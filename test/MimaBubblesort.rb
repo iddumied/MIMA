@@ -141,8 +141,12 @@ class MimaBubblesortTest < Test::Unit::TestCase
     # setting prog start address
     mima.iar.content = "0x00100".hex_to_bin
 
-    # run programm
-    mima.run_until_halt 
+    # run programm and print array
+    mima.run_until_halt do
+      print "\r"
+      0x0.upto(0x10) { |i| print "#{ memory[i].bin_to_hex } " }
+    end
+    print "\n"
 
     # check if array is sorted
     0x0.upto(0xF) do |i| 
