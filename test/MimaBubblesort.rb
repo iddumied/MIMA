@@ -141,22 +141,14 @@ class MimaBubblesortTest < Test::Unit::TestCase
     # setting prog start address
     mima.iar.content = "0x00100".hex_to_bin
 
-    f = File.open("bublesort.log", "w");
-    Thread.new do
-      loop do
-        0x0.upto(0x10) { |i| f.print "#{ memory[i].bin_to_hex } " }
-        f.puts "\n"
-        f.close
-
-        f = File.open("bublesort.log", "a");
-        sleep 1
-      end
-    end
     # run programm
     mima.run_until_halt 
 
-    # print array
-    0x0.upto(0x10) { |i| puts "#{ i.to_bin_ary(24).bin_to_hex }: #{ memory[i].bin_to_hex }" }
+    # check if array is sorted
+    0x0.upto(0xF) do |i| 
+      assert(memory[i].bin_to_dez < memory[i + 1].bin_to_dez,
+              "expected #{ memory[i].bin_to_hex } < #{ memory[i + 1].bin_to_hex }")
+    end
 
   end
 
