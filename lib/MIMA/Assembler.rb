@@ -98,6 +98,8 @@ module MIMA
       @num_pipes = num_pipes
     end
 
+    attr_reader :marks, :source, :memory, :code
+
     ##
     # removes the comments form @source, 
     # split each line by tabs and spaces 
@@ -148,7 +150,7 @@ module MIMA
           @addr = parse_loadpoint(line)
 
         elsif COMMANDS.include? line.first 
-          @memory[@addr] = parse_mima_cmd(args)
+          @memory[@addr] = parse_mima_cmd(line)
           @addr += 1
 
         else
@@ -207,7 +209,7 @@ module MIMA
       end
 
       # if a value is given
-      if /[0-9$]/.match args.last.at(0)
+      if /[0-9$]/.match args.last[0]
         var = parse_var(str).to_hex(@num_pipes)
         MIMA::MimaCommand.new "#{ args.first } #{ var }"
 
@@ -288,7 +290,7 @@ module MIMA
     # creates a constant and seaves it to the marks Hash
     #
     def create_constant args
-      @marks[args.first] = parse_var(args.last)
+      @marks[args.first] = parse_var(args.last).to_hex(@num_pipes)
     end
 
     ##
@@ -296,7 +298,7 @@ module MIMA
     # and into the memory at @addr
     #
     def define_storage args
-      @marks[args.first] = @addr
+      @marks[args.first] = @addr.to_hex(@num_pipes)
 
       if args.length == 3
         @memory[@addr] = parse_var(args.last)
@@ -314,10 +316,10 @@ module MIMA
       end
 
       if args.length == 1
-        @marks[args.first] = @addr
+        @marks[args.first] = @addr.to_hex(@num_pipes)
 
       elsif 
-        @marks[args.first] = @addr
+        @marks[args.first] = @addr.to_hex(@num_pipes)
         @memory[@addr] = parse_mima_cmd(args[1,2])
 
       end

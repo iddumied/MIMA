@@ -42,8 +42,6 @@ class MicroCommandTest < Test::Unit::TestCase
 
       mima.run "LDC #{ y.bin_to_hex }"
       mima.run "AND #{ addr.bin_to_hex }"
-      puts "[DEBUG] #{ y.bin_to_dez } | #{ x.bin_to_dez } = #{ y.bin_to_dez | x.bin_to_dez }"
-      puts "[DEBUG] #{ y.bin_to_dez } & #{ x.bin_to_dez } = #{ y.bin_to_dez & x.bin_to_dez }"
       assert_equal mima.akku.content.bin_to_dez, (x.bin_to_dez & y.bin_to_dez) 
 
       mima.run "LDC #{ y.bin_to_hex }"

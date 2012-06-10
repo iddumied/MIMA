@@ -158,7 +158,7 @@ module MIMA
     def run_until_halt frequenz = 0
 
       # clear Istruction Register
-      @ir.content = [0]*24
+      @ir.content = [0]*@ir.length
 
       # set controlunit to start of fetch
       @controlunit.mip = 0x00
