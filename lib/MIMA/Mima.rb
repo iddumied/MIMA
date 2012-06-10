@@ -30,7 +30,12 @@ module MIMA
       @register.each { |r| @bus.add r }
     end
 
-    attr_reader :controlunit, :akku, :ira, :one, :ir, :alu, :x, :y, :z, :memory, :mar, :mdr, :bus, :register
+    attr_reader :controlunit, :akku, :iar, :one, :ir, :alu, :x, :y, :z, :memory, :mar, :mdr, :bus, :register
+
+    ##
+    # Returns the current command this Mima processes
+    #
+    def cur_cmd; MIMA::MimaCommand.new(@ir.content); end
 
     ##
     # processes one clk
@@ -152,10 +157,13 @@ module MIMA
     #
     def run_until_halt frequenz = 0
 
-      # set controlunit of decode
-      @mip = 0x5
+      # clear Istruction Register
+      @ir.content = [0]*24
 
-      until @controlunit.cur_micro_cmd.description.include? "HALT"
+      # set controlunit to start of fetch
+      @controlunit.mip = 0x00
+
+      until cur_cmd.description.include? "HALT"
         clk
         sleep frequenz
       end
