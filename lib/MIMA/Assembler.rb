@@ -137,21 +137,30 @@ module MIMA
         @parse_index = i
 
         # an mima assembler command is consist of 2 or 3 words
-        unless [2, 3].include? line.length
+        unless [1, 2, 3].include? line.length
           raise AssemberParseError.new line
         end
 
-        if line.first == "*" 
+        if line.length == 1
+          define_jum_mark line
+
+        elsif line.first == "*" 
           @addr = parse_loadpoint(line)
 
         elsif COMMANDS.include? line.first 
           @memory[@addr] = parse_mima_cmd(args)
+          @addr += 1
 
+        else
+          parse_marke line
 
         end        
 
       end
 
+      # clean up
+      @addr = nil
+      @parse_index = nil
     end
 
     ##
@@ -207,8 +216,9 @@ module MIMA
         if @marks.include? args.last
           MIMA::MimaCommand.new "#{ args.first } #{ @marks[args.last] }"
 
-        else 
+        else
           var = find_mark
+          MIMA::MimaCommand.new "#{ args.first } #{ var }"
        
         end
 
@@ -233,15 +243,85 @@ module MIMA
         elsif @code[i].first == "*"
           addr = parse_loadpoint(@code[i])
           
-        else
+        # skip jump marks and constant definitions
+        elsif @code[i].length != 1 and @code[i][1] != "="
           addr += 1
 
         end
 
       end
 
-
       raise AssemberParseError.new "Jump-Mark #{ mark } not found"
+    end
+
+    ##
+    # parses a mark definition:
+    #
+    #  command            | example         | describtion
+    #  -------------------+-----------------+---------------------------------------------
+    #   <MARK> = <var>    | ZERO   = 0x0    | defines are Constant
+    #   <MARK> DS <var>   | ONE    DS 1     | DS (define storage) reserves mempry space
+    #                     | VAR    DS       | and optional sets an initial value
+    #   <MARK>: <MIMACMD> | LOOP:  JMP LOOP | defines a jump mark      
+    #
+    # increases @addr if nedded 
+    # and adds a mima command to the memory if nedded
+    #
+    def parse_marke args
+      if args[1] == "="
+        create_constant args
+
+      elsif args[1] == "DS"
+        define_storage args
+        @addr += 1
+
+      elsif COMMANDS.include? args[1] 
+        define_jum_mark args
+        @addr += 1
+
+      else
+        raise AssemberParseError.new args
+      end
+    end
+
+    ##
+    # creates a constant and seaves it to the marks Hash
+    #
+    def create_constant args
+      @marks[args.first] = parse_var(args.last)
+    end
+
+    ##
+    # defines a storage, saves it to the marks Hash
+    # and into the memory at @addr
+    #
+    def define_storage args
+      @marks[args.first] = @addr
+
+      if args.length == 3
+        @memory[@addr] = parse_var(args.last)
+      end
+    end
+    
+    ##
+    # defines a jump mark and saves it to the marks Hash
+    # also saves a ruby comand to @memory if nedded
+    #
+    def define_jum_mark args
+      if /[A-Za-z]/.match(args.first[0]).nil? or
+                args.first.end_with?(":") == false
+        raise AssemberParseError.new "Not a valid Jump-Marke: #{ args.first }"
+      end
+
+      if args.length == 1
+        @marks[args.first] = @addr
+
+      elsif 
+        @marks[args.first] = @addr
+        @memory[@addr] = parse_mima_cmd(args[1,2])
+
+      end
+
     end
 
   end
