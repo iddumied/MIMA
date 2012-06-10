@@ -14,7 +14,9 @@ class Fixnum
       x /= 2
     end
 
-    ary << 0 until ary.length == length
+    if ary.length < length
+      ary << 0 until ary.length == length
+    end
 
     ary
   end
