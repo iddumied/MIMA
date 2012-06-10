@@ -91,7 +91,7 @@ module MIMA
         new_line = ""
 
         # remove comments
-        @line.each_char do |char|
+        line.each_char do |char|
           break if char == ";"
           new_line << char
         end
