@@ -82,19 +82,42 @@ module MIMA
         
         if ControlUnit::MICROPROGRAMMS[args.first] != nil
           run input
+
         elsif ["p", "print"].include? args.first.downcase
-          if args.include? "ALU" or args.include? "alu"
-            puts "ALU: #{ @alu.state }"
-            args.delete("alu")
-            args.delete("ALU")
-          end
-          print inspect_register(args[1, args.length - 1])
+          sh_print args
+
         end
 
         print prompt
         input = gets.chop
       end
       
+    end
+
+    ##
+    # processes an shell print command
+    #
+    def sh_print args
+
+      # prints ALU state
+      if args.include? "ALU" or args.include? "alu"
+        puts "ALU: #{ @alu.state }"
+        args.delete("alu")
+        args.delete("ALU")
+      end
+
+      # prints value at memory address
+      args.map! do |e|
+        if e.start_with? "0x"
+          puts "#{ e }: #{ @memory[e.hex_to_dez].bin_to_hex }"
+          nil
+        else e end
+      end
+      args.delete nil
+
+      # prints register
+      print inspect_register(args[1, args.length - 1])
+
     end
 
     ##
