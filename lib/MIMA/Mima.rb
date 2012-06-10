@@ -142,6 +142,26 @@ module MIMA
 
       str
     end
+    
+    ##
+    # let the mima processes a programm from the memory starting at
+    # the address from IRA, until the mimal stops (HALT)
+    #
+    # you can optional set an clk frequenz,
+    # default is as fast as possible
+    #
+    def run_until_halt frequenz = 0
+
+      # set controlunit of decode
+      @mip = 0x5
+
+      until @controlunit.cur_micro_cmd.description.include? "HALT"
+        clk
+        sleep frequenz
+      end
+
+    end
+
 
   end
   
