@@ -36,10 +36,7 @@ module MIMA
     # processes one clk
     #
     def clk
-      @controlunit.clk
-      @bus.clk
-      @memory.clk
-      @alu.clk
+      [ @controlunit, @bus, @memory, @alu ].each { |o| o.clk }
     end
 
     ##
