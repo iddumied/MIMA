@@ -48,7 +48,7 @@ module MIMA
   #  -------------------+-----------------+---------------------------------------------
   #   * = <var>         | *      = $10    | Loadpoint: all following comands
   #                     |                 | are saved in the memory starting at <var>
-  #   <MARK> = <var>    | ZERO   = 0x0    | defines are Constant
+  #   <MARK> = <var>    | ZERO   = 0x0    | defines a Constant
   #   <MARK> DS <var>   | ONE    DS 1     | DS (define storage) reserves mempry space
   #                     | VAR    DS       | and optional sets an initial value
   #   <MARK>: <MIMACMD> | LOOP:  JMP LOOP | defines a jump mark      
