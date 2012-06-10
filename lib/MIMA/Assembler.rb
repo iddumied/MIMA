@@ -80,7 +80,11 @@ module MIMA
     # initialize this with an given File
     # or String including an Mima assembler file
     #
-    def initialize arg
+    # you can also set a number of pipes of the mima
+    # ( with is also be the bit length of an value in the memory )
+    # default is 24
+    #
+    def initialize arg, num_pipes = 24
       if arg.is_a? File
         @source = arg.read
       elsif arg.is_a? String
@@ -91,6 +95,7 @@ module MIMA
 
       @marks = { }
       @memory = { }
+      @num_pipes = num_pipes
     end
 
     ##
@@ -126,17 +131,21 @@ module MIMA
     # in the formt: addr => MimaCommand
     #
     def parse_code
-      addr = 0x0
+      @addr = 0x0
 
       @code.each_with_index do |line, i|
+        @parse_index = i
 
         # an mima assembler command is consist of 2 or 3 words
         unless [2, 3].include? line.length
           raise AssemberParseError.new line
         end
 
-        case line.file
-          when "*" : addr = parse_var(str.last)
+        if line.first == "*" 
+          @addr = parse_loadpoint(line)
+
+        elsif COMMANDS.include? line.first 
+          @memory[@addr] = parse_mima_cmd(args)
 
 
         end        
@@ -152,6 +161,8 @@ module MIMA
       if args[1] != "=" or args.length != 3
         raise AssemberParseError.new args
       end
+
+      parse_var args.last
     end
 
     ##
@@ -174,6 +185,65 @@ module MIMA
       end
     end
     
+    ##
+    # parses an mima comand
+    # in the form <MIMACOMAND> <MARK/VALUE>
+    #
+    # see Assember class describtion for 
+    # list of avilabel comands
+    #
+    def parse_mima_cmd args
+      unless args.length == 2
+        raise AssemberParseError.new args
+      end
+
+      # if a value is given
+      if /[0-9$]/.match args.last.at(0)
+        var = parse_var(str).to_hex(@num_pipes)
+        MIMA::MimaCommand.new "#{ args.first } #{ var }"
+
+      # mark is given
+      else 
+        if @marks.include? args.last
+          MIMA::MimaCommand.new "#{ args.first } #{ @marks[args.last] }"
+
+        else 
+          var = find_mark
+       
+        end
+
+      end
+
+    end
+
+    ##
+    # finds a jump mark after current parse position
+    #
+    def find_mark mark
+      addr = @addr
+
+      for i in (@parse_index...(@code.length)) do
+
+        # if mark found save to marks and return addr
+        if @code[i].first == mark
+          @marks[mark] = addr.to_hex(@num_pipes)
+          return @marks[mark]
+        
+        # if loadpoint found actualize addr
+        elsif @code[i].first == "*"
+          addr = parse_loadpoint(@code[i])
+          
+        else
+          addr += 1
+
+        end
+
+      end
+
+
+      raise AssemberParseError.new "Jump-Mark #{ mark } not found"
+    end
+
   end
 
 end
