@@ -205,6 +205,11 @@ module MIMA
     attr_reader :akku, :iar, :one, :ir, :alu, :x, :y, :z, :memory, :mar, :mdr, :mip, :micro
 
     ##
+    # returns the current micro comand of this
+    #
+    def cur_micro_cmd; @micro; end
+
+    ##
     # Sets the Micro Instruction Pointer to a given Value
     #
     def mip= val
