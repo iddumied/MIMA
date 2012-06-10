@@ -64,6 +64,19 @@ module MIMA
     LCOMMANDS = MIMA::MimaCommand::LCOMMANDS
 
     ##
+    # implementation of an assembler parse error
+    #
+    class AssemberParseError < RuntimeError
+      def initilaize str
+        if str.is_a? Array
+          str = str.inspect.gsub("[", "").gsub("]", "").gsub(",", "")
+        end
+
+        super "Error while parsing MIMA Assembler: #{ str }"
+      end
+    end
+
+    ##
     # initialize this with an given File
     # or String including an Mima assembler file
     #
@@ -76,6 +89,8 @@ module MIMA
         raise ArgumentError.new "expected File or String, but got #{ arg.class }"
       end
 
+      @marks = { }
+      @memory = { }
     end
 
     ##
@@ -103,6 +118,60 @@ module MIMA
       end
 
       @code
+    end
+
+    ##
+    # Parses the assembler code in @code
+    # and Saves the result in @memory
+    # in the formt: addr => MimaCommand
+    #
+    def parse_code
+      addr = 0x0
+
+      @code.each_with_index do |line, i|
+
+        # an mima assembler command is consist of 2 or 3 words
+        unless [2, 3].include? line.length
+          raise AssemberParseError.new line
+        end
+
+        case line.file
+          when "*" : addr = parse_var(str.last)
+
+
+        end        
+
+      end
+
+    end
+
+    ##
+    # parsing an loadpoint and returns the defined value
+    #
+    def parse_loadpoint args
+      if args[1] != "=" or args.length != 3
+        raise AssemberParseError.new args
+      end
+    end
+
+    ##
+    # parses an value and returns the decimal represenation of it
+    # values can bee:
+    #
+    #  notation | example | description
+    #  ---------+---------+------------
+    #   $<var>  | $2A     | hexvalue
+    #   0x<var> | 0xFF    | hexvalue
+    #   <var>   | 1337    | dezvalue
+    #
+    def parse_var str
+      if str.start_with? "$"
+        str.gsub("$", "0x").hex_to_dez
+      elsif str.start_with? "0x"
+        str.hex_to_dez
+      else
+        str.to_i
+      end
     end
     
   end
