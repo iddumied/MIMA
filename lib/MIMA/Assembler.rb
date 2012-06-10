@@ -316,10 +316,10 @@ module MIMA
       end
 
       if args.length == 1
-        @marks[args.first] = @addr.to_hex(@num_pipes)
+        @marks[args.first.chop] = @addr.to_hex(@num_pipes)
 
       elsif 
-        @marks[args.first] = @addr.to_hex(@num_pipes)
+        @marks[args.first.chop] = @addr.to_hex(@num_pipes)
         @memory[@addr] = parse_mima_cmd(args[1,2])
 
       end
