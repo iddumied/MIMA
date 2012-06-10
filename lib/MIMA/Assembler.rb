@@ -65,9 +65,46 @@ module MIMA
 
     ##
     # initialize this with an given File
-    # or String includina an Mima assembler file
+    # or String including an Mima assembler file
     #
+    def initialize arg
+      if arg.is_a? File
+        @source = arg.read
+      elsif arg.is_a? String
+        @source = arg
+      else
+        raise ArgumentError.new "expected File or String, but got #{ arg.class }"
+      end
 
+    end
+
+    ##
+    # removes the comments form @source, 
+    # split each line by tabs and spaces 
+    # and saves the result it in @code
+    # as an two dimensional array of lines and words
+    #
+    def parse_source
+      @code = []
+
+      @source.each_line do |line|
+        new_line = ""
+
+        # remove comments
+        @line.each_char do |char|
+          break if char == ";"
+          new_line << char
+        end
+
+        new_line = new_line.split(" ").map { |e| e.split("\t") }.flatten
+        next if new_line.empty?
+        
+        @code << new_line
+      end
+
+      @code
+    end
+    
   end
 
 end
