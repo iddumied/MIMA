@@ -25,7 +25,9 @@ class Fixnum
   # converts this into a hex number
   #
   def to_hex bit_len = 0
-    self.to_bin_ary(bit_len).bin_to_hex
+    bin = self.to_bin_ary(bit_len)
+    bin << 0 until bin.length % 4 == 0
+    bin.bin_to_hex
   end
 
 end
