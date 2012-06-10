@@ -3,7 +3,7 @@ module MIMA
   ##
   # This Class implements an Assembler for the MIMA.
   #
-  # The Comand Fornat is:
+  # The MIMA Comand Fornat is:
   # 
   #  +----+--------------------+
   #  |Code| Address / Constant |
@@ -12,42 +12,61 @@ module MIMA
   #  | 0xF|Code|  0x0000       |
   #  +----+----+---------------+
   #
-  # Knowen Comands are:
+  # Knowen MIMA Comands are:
   #
   # OpCode | Comand | description
   # -------+--------+--------------------------
-  #  0x00  | LDC c  | c -> Akku
-  #  0x01  | LDV a  | <a> -> Akku
-  #  0x02  | STV a  | Akku -> <a>
-  #  0x03  | ADD a  | Akku + <a> -> Akku
-  #  0x04  | AND a  | Akku AND <a> -> Akku
-  #  0x05  | OR  a  | Akku OR <a> -> Akku
-  #  0x06  | XOR a  | Akku XOR <a> -> Akku
-  #  0x07  | EQL a  | if Akku == <a> -1 -> Akku
+  #  0x0   | LDC  c | c -> Akku
+  #  0x1   | LDV  a | <a> -> Akku
+  #  0x2   | STV  a | Akku -> <a>
+  #  0x3   | ADD  a | Akku + <a> -> Akku
+  #  0x4   | AND  a | Akku AND <a> -> Akku
+  #  0x5   | OR   a | Akku OR <a> -> Akku
+  #  0x6   | XOR  a | Akku XOR <a> -> Akku
+  #  0x7   | EQL  a | if Akku == <a> -1 -> Akku
   #        |        | else            0 -> Akku
-  #  0x08  | JMP a  | a -> IAR
-  #  0x09  | JMN a  | if Akku < 0 a -> IAR 
+  #  0x8   | JMP  a | a -> IAR
+  #  0x9   | JMN  a | if Akku < 0 a -> IAR 
+  #  0xA   | LDIV a | <<a>> -> Akku
+  #  0xB   | STIV a | Akku -> <<a>>
   #  0xF0  | HATL   | stops the MIMA
   #  0xF1  | NOT    | NOT Akku -> Akku
   #  0xF2  | RAR    | rotate Akku right -> Akku
   #
+  #  This Assembler has some extra comands and definitions to make programming easyer:
+  #
+  #  Value Notations:
+  #
+  #  notation | example | description
+  #  ---------+---------+------------
+  #   $<var>  | $2A     | hexvalue
+  #   0x<var> | 0xFF    | hexvalue
+  #   <var>   | 1337    | dezvalue
+  #
+  #
+  #  command            | example         | describtion
+  #  -------------------+-----------------+---------------------------------------------
+  #   * = <var>         | *      = $10    | Loadpoint: all following comands
+  #                     |                 | are saved in the memory starting at <var>
+  #   <MARK> = <var>    | ZERO   = 0x0    | defines are Constant
+  #   <MARK> DS <var>   | ONE    DS 1     | DS (define storage) reserves mempry space
+  #                     | VAR    DS       | and optional sets an initial value
+  #   <MARK>: <MIMACMD> | LOOP:  JMP LOOP | defines a jump mark      
+  #   <MIMACMD> <MARK>  | LDC    ZERO     | using MIMA commands with marks and constants
+  #                     | JMP    END      |
+  #                     | STV    VAR      |
+  #   <CMD> ; <comment> | ; your comment  | comment cour code                  
+  #
   class Assembler
     
-    COMMANDS = {
-      "LDC"  => "0x0",
-      "LDV"  => "0x1",
-      "STV"  => "0x2",
-      "ADD"  => "0x3",
-      "AND"  => "0x4",
-      "OR"   => "0x5",
-      "XOR"  => "0x6",
-      "EQL"  => "0x7",
-      "JMP"  => "0x8",
-      "JMN"  => "0x9",
-      "HALT" => "0xF1",
-      "NOT"  => "0xF2",
-      "RAR"  => "0xF3"
-    }
+    COMMANDS  = MIMA::MimaCommand::COMMANDS
+    SCOMMANDS = MIMA::MimaCommand::SCOMMANDS
+    LCOMMANDS = MIMA::MimaCommand::LCOMMANDS
+
+    ##
+    # initialize this with an given File
+    # or String includina an Mima assembler file
+    #
 
   end
 
