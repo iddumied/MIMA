@@ -131,9 +131,9 @@ module MIMA
 
       0x2D => micro("IR -> IAR; ADR 0x00;"),                    # Jumps to the Addres from IR (JMP, JMN)
 
-      0x2E => micro("IR -> MAR; R = 1; ADR 0x2E;"),             ##
-      0x2F => micro("R = 1; ADR 0x2F;"),                        # Loads the value at the Address stored at the Adress from IR
-      0x30 => micro("R = 1; ADR 0x30;"),                        # IRA points to Addr, Addr points to value
+      0x2E => micro("IR -> MAR; R = 1; ADR 0x2F;"),             ##
+      0x2F => micro("R = 1; ADR 0x30;"),                        # Loads the value at the Address stored at the Adress from IR
+      0x30 => micro("R = 1; ADR 0x31;"),                        # IRA points to Addr, Addr points to value
       0x31 => micro("MDR -> MAR; R = 1; ADR 0x32"),             # 
       0x32 => micro("R = 1; ADR 0x33"),                         # Indirect Load Value (LDIV)
       0x33 => micro("R = 1; ADR 0x34"),                         #
