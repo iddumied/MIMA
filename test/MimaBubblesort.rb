@@ -23,39 +23,50 @@ require 'test/unit'
 # NOTSORTED DS               ;
 #                 
 # * = 0x00100     
-# START:    LDC   0x00000    ; load start addres of the array
-#           STV   INDEX      ; and save it in INDEX
-#           STV   NOTSORTED  ; sets NOTSORTED = 0
-# NEXT:     LDV   INDEX      ; 
-#           EQL   0x00040    ; 
-#           JMN   ISENDE     ; jump if end of array is reached
-#           LDV   INDEX      ;
-#           STV   VAR1ADDR   ; 
-#           LDC   0x00001    ; 
-#           ADD   INDEX      ; increases INDEX
-#           STV   INDEX      ; and stores it
-#           STV   VAR2ADDR   ; 
-#           LDIV  VAR2ADDR   ; 
-#           STV   VAR2       ; loads ans stores:
-#           LDIV  VAR1ADDR   ; VAR1 = array[INDEX] 
-#           STV   VAR1       ; VAR2 = array[INDEX + 1]
-#           NOT              ; 
-#           ADD   VAR2       ; compares VAR1 and VAR2
-#           NOT              ; ( ~(~VAR1 + VAR2) < 0  => VAR1 < VAR2 
-#           JMN   NEXT       ;  
-#           LDV   VAR1       ; switch VAR1, VAR2
-#           STV   TEMP       ;
-#           LDV   VAR2       ;
-#           STIV  VAR1ADDR   ;
-#           LDV   TEMP       ;
-#           STIV  VAR2ADDR   ;
-#           LDC   0x00001    ;
-#           STV   NOTSORTED  ; sets NOTSORTED = 1
-#           JMP   NEXT       ;
-# ISENDE:   LDC   0x00001    ;
-#           EQL   NOTSORTED  ; jump to start if array not sorted yet
-#           JMN   START      ;
-#           HALT             ; programm finisehd
+#
+# ; outer loop of BubbleSort
+# START:    LDC   0x00000               ; load start addres of the array
+#           STV   INDEX                 ; and save it in INDEX
+#           STV   NOTSORTED             ; sets NOTSORTED = 0
+# 
+# ; inner loop loads the addresses and values of
+# ; array[INDEX] and Array[INDEX + 1]
+# NEXT:     LDV   INDEX                 ; 
+#           EQL   0x00040               ; 
+#           JMN   ISENDE                ; jump if end of array is reached
+#           LDV   INDEX                 ;
+#           STV   VAR1ADDR              ; 
+#           LDC   0x00001               ; 
+#           ADD   INDEX                 ; increases INDEX
+#           STV   INDEX                 ; and stores it
+#           STV   VAR2ADDR              ; 
+#           LDIV  VAR2ADDR              ; 
+#           STV   VAR2                  ; loads ans stores:
+#           LDIV  VAR1ADDR              ; VAR1 = array[INDEX] 
+#           STV   VAR1                  ; VAR2 = array[INDEX + 1]
+#
+# ; compares array[INDEX] and array[INDEX + 1]
+#           NOT                         ; 
+#           ADD   VAR2                  ; compares VAR1 and VAR2
+#           NOT                         ; ( ~(~VAR1 + VAR2) < 0  => VAR1 < VAR2 
+#           JMN   NEXT                  ; 
+#
+# ; switches array[INDEX] and array[INDEX + 1]
+#           LDV   VAR1                  ; load VAR1
+#           STV   TEMP                  ; TEMP = VAR1
+#           LDV   VAR2                  ; load VAR2
+#           STIV  VAR1ADDR              ; array[INDEX] = VAR2
+#           LDV   TEMP                  ; load TEMP
+#           STIV  VAR2ADDR              ; array[INDEX + 1] = TEMP (VAR1)
+#           LDC   0x00001               ;
+#           STV   NOTSORTED             ; sets NOTSORTED = 1
+#           JMP   NEXT                  ; jumps to inner loop
+#
+# ; starts from beginning if array is not sorted yet
+# ISENDE:   LDC   0x00001               ;
+#           EQL   NOTSORTED             ; jump to start if array not sorted yet
+#           JMN   START                 ;
+#           HALT                        ; programm finisehd
 #
 class MimaBubblesortTest < Test::Unit::TestCase
   
