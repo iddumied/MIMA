@@ -143,15 +143,16 @@ module MIMA
           raise AssemberParseError.new line
         end
 
-        if line.length == 1
-          define_jum_mark line
 
-        elsif line.first == "*" 
+        if line.first == "*" 
           @addr = parse_loadpoint(line)
 
         elsif COMMANDS.include? line.first 
           @memory[@addr] = parse_mima_cmd(line)
           @addr += 1
+
+        elsif line.length == 1
+          define_jum_mark line
 
         else
           parse_marke line
@@ -204,13 +205,16 @@ module MIMA
     # list of avilabel comands
     #
     def parse_mima_cmd args
-      unless args.length == 2
+      unless [1,2].include? args.length
         raise AssemberParseError.new args
       end
 
+      if args.length == 1
+        MIMA::MimaCommand.new args.first
+
       # if a value is given
-      if /[0-9$]/.match args.last[0]
-        var = parse_var(str).to_hex(@num_pipes)
+      elsif /[0-9$]/.match args.last[0]
+        var = parse_var(args.last).to_hex(@num_pipes)
         MIMA::MimaCommand.new "#{ args.first } #{ var }"
 
       # mark is given
@@ -219,7 +223,7 @@ module MIMA
           MIMA::MimaCommand.new "#{ args.first } #{ @marks[args.last] }"
 
         else
-          var = find_mark
+          var = find_mark(args.last)
           MIMA::MimaCommand.new "#{ args.first } #{ var }"
        
         end
@@ -233,6 +237,7 @@ module MIMA
     #
     def find_mark mark
       addr = @addr
+      mark += ":"
 
       for i in (@parse_index...(@code.length)) do
 
