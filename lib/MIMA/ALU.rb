@@ -125,7 +125,7 @@ module MIMA
       carry = 0
 
       # claulate x + y = z
-      for i in (0...@x.length) do
+      0.upto @x.length-1 do |i|
         tmp   = x[i] + y[i] + carry
         z[i]  = tmp % 2
         carry = tmp / 2
@@ -143,9 +143,7 @@ module MIMA
       x = @x.content
       z = Array.new @z.length, 0
 
-      for i in (0...@z.length) do
-        z[i] = x[(i - 1) % @z.length]
-      end
+      0.upto(@z.length-1) { |i| z[i] = x[(i - 1) % @z.length] }
 
       @z.content = z
     end
@@ -160,9 +158,7 @@ module MIMA
       y = @y.content
       z = Array.new @z.length, 0
 
-      for i in (0...@z.length) do
-        z[i] = x[i] & y[i]
-      end
+      0.upto(@z.length-1) { |i| z[i] = x[i] & y[i] }
 
       @z.content = z
     end
@@ -177,9 +173,7 @@ module MIMA
       y = @y.content
       z = Array.new @z.length, 0
 
-      for i in (0...@z.length) do
-        z[i] = x[i] | y[i]
-      end
+      0.upto(@z.length-1) { |i| z[i] = x[i] | y[i] }
 
       @z.content = z
     end
@@ -194,9 +188,7 @@ module MIMA
       y = @y.content
       z = Array.new @z.length, 0
 
-      for i in (0...@z.length) do
-        z[i] = x[i] ^ y[i]
-      end
+      0.upto(@z.length-1) { |i| z[i] = x[i] ^ y[i] }
 
       @z.content = z
     end
@@ -211,7 +203,7 @@ module MIMA
       x = @x.content
       z = Array.new @z.length, 0
 
-      for i in (0...@z.length) do
+      0.upto @z.length-1 do |i|
         z[i] = (x[i] == 1) ? 0 : 1
       end
 
@@ -228,7 +220,7 @@ module MIMA
       y = @y.content
       z = Array.new @z.length, 1
 
-      for i in (0...@z.length) do
+      0.upto @z.length-1 do |i|
         unless x[i] == y[i]
           z = Array.new @z.length, 0
           break
