@@ -12,6 +12,7 @@ load './lib/MIMA/IR.rb'
 load './lib/MIMA/ControlUnit.rb'
 load './lib/MIMA/MimaCommand.rb'
 load './lib/MIMA/Mima.rb'
+load './lib/MIMA/Assembler.rb'
 
 module MIMA
   VERSION = '0.0.1'

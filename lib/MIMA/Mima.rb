@@ -30,7 +30,12 @@ module MIMA
       @register.each { |r| @bus.add r }
     end
 
-    attr_reader :controlunit, :akku, :ira, :one, :ir, :alu, :x, :y, :z, :memory, :mar, :mdr, :bus, :register
+    attr_reader :controlunit, :akku, :iar, :one, :ir, :alu, :x, :y, :z, :memory, :mar, :mdr, :bus, :register
+
+    ##
+    # Returns the current command this Mima processes
+    #
+    def cur_cmd; MIMA::MimaCommand.new(@ir.content); end
 
     ##
     # processes one clk
@@ -139,6 +144,30 @@ module MIMA
 
       str
     end
+    
+    ##
+    # let the mima processes a programm from the memory starting at
+    # the address from IRA, until the mimal stops (HALT)
+    #
+    # you can optional set an clk frequenz,
+    # default is as fast as possible
+    #
+    def run_until_halt frequenz = 0
+
+      # clear Istruction Register
+      @ir.content = [0]*@ir.length
+
+      # set controlunit to start of fetch
+      @controlunit.mip = 0x00
+
+      until cur_cmd.description.include? "HALT"
+        clk
+        yield if block_given?
+        sleep frequenz
+      end
+
+    end
+
 
   end
   

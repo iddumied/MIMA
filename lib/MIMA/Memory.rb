@@ -51,7 +51,7 @@ module MIMA
     # the MIMA state direcly by the user (not a real MIMA function)
     #
     def []= index, value
-      if index.class =! Fixnum or value.class != Array or
+      if index.class != Fixnum or value.class != Array or
           index >= 2**(@mar.length) or index < 0 or value.length != @mdr.length
 
         raise ArgumentError.new "wrong index and / or value given"
