@@ -53,9 +53,7 @@ module MIMA
 
       if @read == 1
         length = (pipes.length < @bits.length) ? pipes.length : @bits.length
-        for i in (0...length) do
-          @bits[i] = pipes[i]
-        end
+        0.upto(length-1) { |i| @bits[i] = pipes[i] }
       end
     end
 
